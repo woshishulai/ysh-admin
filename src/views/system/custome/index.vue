@@ -191,6 +191,7 @@
         query.roleId = items.realname
         query.phone = items.phone
         query.realname = items.realname
+        query.status = items.status
         menuDrawerRef.value.show()
     }
     //删除

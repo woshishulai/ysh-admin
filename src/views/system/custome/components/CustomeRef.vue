@@ -19,6 +19,10 @@
                         <el-option v-for="item in props.selects" :key="item.id" :label="item.shop_name" :value="item.id" />
                     </el-select>
                 </el-form-item> -->
+                <el-form-item label="修改状态" prop="status">
+                    <el-checkbox @change="showCheck1" v-model="checked1">在线</el-checkbox>
+                    <el-checkbox @change="showCheck2" v-model="checked2">停用</el-checkbox>
+                </el-form-item>
                 <el-form-item label="手机号" prop="phone">
                     <el-input v-model="formData.phone" placeholder="请输入手机号" />
                 </el-form-item>
@@ -38,8 +42,11 @@
 <script lang="ts" setup>
     import { reactive, ref, watch, onMounted } from 'vue'
     import { FormInstance } from 'element-plus'
+    import { ElNotification } from 'element-plus'
     import { useSettingStore } from '@/store/modules/setting'
     import { addYongHuList } from '@/api/yonghu/apis'
+    const checked1 = ref(false)
+    const checked2 = ref(false)
     const SettingStore = useSettingStore()
     const ruleFormRef = ref<FormInstance>()
     const dialogVisible = ref()
@@ -67,9 +74,10 @@
             { min: 6, max: 99, message: '长度在6个字符以上', trigger: 'blur' },
         ],
         username: [
-            { required: true, message: '请输入账号', trigger: 'blur' },
-            { min: 5, max: 5, message: '长度保持在5个字符', trigger: 'blur' },
+            // { required: true, message: '请输入账号', trigger: 'blur' },
+            // { min: 5, max: 5, message: '长度保持在5个字符', trigger: 'blur' },
         ],
+        status: [{ required: true, message: '请选择状态', trigger: 'blur' }],
         roleId: [{ required: true, message: '请选择角色', trigger: 'blur' }],
         shopId: [{ required: true, message: '请选择店铺', trigger: 'blur' }],
         phone: [{ required: true, message: '请输入手机号', trigger: 'blur' }],
@@ -88,18 +96,12 @@
         () => props.query,
         (newQuery) => {
             formData.value = newQuery
-            if (formData.value.id !== '') {
-                props.selectss.forEach((item) => {
-                    if (item.userList && item.userList.length != 0) {
-                        item.userList.forEach((i) => {
-                            if (i.realname == formData.value.roleId) {
-                                formData.value.roleId = []
-                                formData.value.roleId.push(item.id)
-                                // formData.value.roleId.push(i.id)
-                            }
-                        })
-                    }
-                })
+            if (formData.value.status == 1) {
+                checked1.value = true
+                checked2.value = false
+            } else if (formData.value.status == 2) {
+                checked2.value = true
+                checked1.value = false
             }
         },
         {
@@ -107,17 +109,32 @@
             deep: true,
         },
     )
-
+    const showCheck1 = (item) => {
+        checked1.value = true
+        checked2.value = false
+        formData.value.status = 1
+    }
+    const showCheck2 = (item) => {
+        checked1.value = false
+        checked2.value = true
+        formData.value.status = 2
+    }
     const handleClose = async () => {
-        // return
         formData.value.roleId = 0
-        console.log(formData.value)
-
         await ruleFormRef.value.validate(async (valid, fields) => {
             if (valid) {
                 try {
                     let res = await addYongHuList(formData.value)
-                    SettingStore.setReload()
+                    if (res.code == 1) {
+                        formData.value = {}
+                        SettingStore.setReload()
+                    } else {
+                        ElNotification({
+                            message: res.msg,
+                            type: 'error',
+                            duration: 3000,
+                        })
+                    }
                 } catch (error) {
                     console.log(error)
                 }
