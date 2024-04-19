@@ -39,7 +39,6 @@
     import { useUserStore } from '@/store/modules/user'
     import { useSettingStore } from '@/store/modules/setting'
     import { changeTimeList } from '@/api/time/apis'
-    import { ElNotification } from 'element-plus'
 
     const SettingStore = useSettingStore()
     const ruleFormRef = ref<FormInstance>()
@@ -103,7 +102,6 @@
         }
         console.log(params)
     }
-    const emits = defineEmits(['getList'])
 
     const updateCheck = (index) => {
         for (let i = 1; i <= 7; i++) {
@@ -112,7 +110,6 @@
         }
         console.log(params)
     }
-
     const handleClose = async () => {
         if (formData.value.start_time !== undefined) {
             var startDate = new Date(formData.value.start_time)
@@ -142,16 +139,7 @@
             if (valid) {
                 try {
                     let res = await changeTimeList(params)
-                    if (res.code != 1) {
-                        ElNotification({
-                            message: res.msg,
-                            type: 'error',
-                            duration: 3000,
-                        })
-                    } else {
-                        emits('getList')
-                        dialogVisible.value = false
-                    }
+                    SettingStore.setReload()
                 } catch (error) {
                     console.log(error)
                 }
