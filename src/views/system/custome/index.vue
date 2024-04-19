@@ -39,7 +39,7 @@
                     <el-table-column label="状态" align="center">
                         <template #default="scope">
                             <span class="green" v-if="scope.row.status == 1">正常</span>
-                            <span class="red" v-if="scope.row.status == 2">冻结</span>
+                            <span class="red" v-if="scope.row.status == 2">停用</span>
                             <!-- <el-button type="success" v-if="scope.row.status == 1" size="small"> 正常 </el-button>
                             <el-button type="danger" v-else size="small"> 冻结 </el-button> -->
                         </template>
@@ -47,9 +47,9 @@
                     <el-table-column prop="status" align="center" width="170" label="操作" fixed="right">
                         <template #default="scope">
                             <div class="cell">
-                                <el-button v-if="scope.row.children" type="success" size="small" :icon="Plus" @click="add()">
+                                <!-- <el-button v-if="scope.row.children" type="success" size="small" :icon="Plus" @click="add()">
                                     新增
-                                </el-button>
+                                </el-button> -->
                                 <el-button type="primary" size="small" icon="Edit" @click="edit(scope.row)"> 编辑 </el-button>
                                 <el-button type="danger" size="small" icon="Delete" @click="del(scope.row)"> 删除 </el-button>
                             </div>

@@ -26,8 +26,8 @@
                     <el-table-column prop="id" width="140" align="center" label="审批列表id" />
                     <el-table-column prop="name" width="140" align="center" label="联系人姓名" />
                     <el-table-column prop="phone" width="140" align="center" label="手机号" />
-                    <el-table-column prop="mail" width="140" align="center" label="邮箱地址" />
-                    <el-table-column prop="address" width="140" align="center" label="邮寄地址" />
+                    <el-table-column prop="mail" width="200" align="center" label="邮箱地址" />
+                    <el-table-column prop="address" width="200" align="center" label="邮寄地址" />
                     <el-table-column prop="wechat" width="140" align="center" label="微信" />
                     <el-table-column label="公司类型" width="140" align="center">
                         <template #default="scope">
@@ -56,9 +56,9 @@
                             />
                         </template>
                     </el-table-column>
-                    <el-table-column prop="add_time" align="center" width="140" label="添加时间" />
+                    <el-table-column prop="add_time" align="center" width="200" label="添加时间" />
                     <el-table-column prop="user_id" align="center" width="140" label="审批人id" />
-                    <el-table-column prop="approve_time" align="center" width="140" label="审批时间" />
+                    <el-table-column prop="approve_time" align="center" width="200" label="审批时间" />
                     <el-table-column label="状态" align="center" width="140">
                         <template #default="scope">
                             <span class="blue" v-if="scope.row.status == 1">待处理</span>

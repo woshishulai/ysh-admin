@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-drawer v-model="dialogVisible" :title="props.title" size="50%">
+        <el-drawer v-model="dialogVisible" title="编辑商户" size="50%">
             <el-form ref="ruleFormRef" :model="formData" :rules="rules" label-width="120px">
                 <el-form-item label="账号" prop="username">
                     <el-input v-model="formData.username" placeholder="请输入账号" />
@@ -74,8 +74,8 @@
             { min: 6, max: 99, message: '长度在6个字符以上', trigger: 'blur' },
         ],
         username: [
-            // { required: true, message: '请输入账号', trigger: 'blur' },
-            // { min: 5, max: 5, message: '长度保持在5个字符', trigger: 'blur' },
+            { required: true, message: '请输入账号', trigger: 'blur' },
+            { min: 6, max: 99, message: '长度保持在6个字符以上', trigger: 'blur' },
         ],
         status: [{ required: true, message: '请选择状态', trigger: 'blur' }],
         roleId: [{ required: true, message: '请选择角色', trigger: 'blur' }],
