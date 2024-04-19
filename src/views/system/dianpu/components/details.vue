@@ -358,6 +358,7 @@
             padding: 15px 11px 11px;
             background-color: #fff;
             .jieshao {
+                width: 100%;
                 &.active {
                     height: 40px;
                     overflow: hidden;

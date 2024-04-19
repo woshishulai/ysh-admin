@@ -11,7 +11,7 @@
             </el-form>
         </div> -->
         <div class="footer">
-            <div class="util" v-if="role != 1">
+            <div class="util">
                 <el-button type="primary" @click="add">
                     <el-icon><Plus /></el-icon>
                     新增店铺营业时间
@@ -50,7 +50,7 @@
                     </el-table-column>
                     <el-table-column prop="start_time" label="开始营业时间" align="center" />
                     <el-table-column prop="end_time" label="结束营业时间" align="center" />
-                    <el-table-column label="操作" v-if="role != 1" align="center" width="160" fixed="right">
+                    <el-table-column label="操作" align="center" width="160" fixed="right">
                         <template #default="scope">
                             <el-button type="primary" size="small" icon="Edit" @click="editHandler(scope.row)"> 编辑 </el-button>
                         </template>
@@ -58,8 +58,8 @@
                 </el-table>
             </div>
         </div>
-        <CustomeRef ref="menuDrawerRef" :query="query" />
-        <UserDialog :query="params" ref="userDialog" />
+        <CustomeRef @getList="getList" ref="menuDrawerRef" :query="query" />
+        <UserDialog @getList="getList" :query="params" ref="userDialog" />
     </div>
 </template>
 <script lang="ts" setup>
@@ -121,6 +121,11 @@
         }
         loading.value = false
     })
+    const getList = async () => {
+        let res = await getTimeList(query)
+        tableData.value = res.data
+        tableData.value.sort((a, b) => a.week - b.week)
+    }
     //修改
     const editHandler = (items) => {
         params.value.start_time = items.start_time

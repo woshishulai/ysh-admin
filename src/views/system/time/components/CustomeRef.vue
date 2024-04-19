@@ -40,6 +40,8 @@
     import { useSettingStore } from '@/store/modules/setting'
     import { changeTimeList } from '@/api/time/apis'
     import { useRoute } from 'vue-router'
+    import { ElNotification } from 'element-plus'
+
     let props = defineProps({
         query: Object,
     })
@@ -62,6 +64,7 @@
         checked1: true,
         checked2: false,
     })
+    const emits = defineEmits(['getList'])
     const updateStatus = (status) => {
         for (let i = 1; i <= 2; i++) {
             statusList[`checked${i}`] = i === status
@@ -130,7 +133,23 @@
             if (valid) {
                 try {
                     let res = await changeTimeList(params)
-                    SettingStore.setReload()
+                    if (res.code != 1) {
+                        ElNotification({
+                            message: res.msg,
+                            type: 'error',
+                            duration: 3000,
+                        })
+                    } else {
+                        ElNotification({
+                            message: res.msg,
+                            type: 'success',
+                            duration: 800,
+                        })
+                        setTimeout(() => {
+                            emits('getList')
+                            dialogVisible.value = false
+                        }, 800)
+                    }
                 } catch (error) {
                     console.log(error)
                 }

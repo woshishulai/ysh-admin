@@ -165,7 +165,9 @@
                             type: 'success',
                             duration: 3000,
                         })
-                        SettingStore.setReload()
+                        setTimeout(() => {
+                            dialogVisible.value = false
+                        }, 1500)
                     }
                 } catch (error) {
                     console.log(error)
