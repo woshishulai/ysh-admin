@@ -61,8 +61,10 @@
         </div>
         <div class="change-some">
             <div class="top-cate">
-                <span class="nav" @click="changeActive(0)" :class="active == 0 ? 'active' : ''">成功案例</span>
-                <span class="nav" @click="changeActive(9999999999)" :class="active == '9999999999' ? 'active' : ''">主推服务</span>
+                <span class="nav" v-if="tableData.length" @click="changeActive(0)" :class="active == 0 ? 'active' : ''">成功案例</span>
+                <span class="nav" v-if="mailList.length" @click="changeActive(9999999999)" :class="active == '9999999999' ? 'active' : ''"
+                    >主推服务</span
+                >
                 <span
                     class="nav"
                     :class="active == item.id ? 'active' : ''"
@@ -126,7 +128,6 @@
     import { getFuList } from '@/api/fu/apis'
     import { getAnList } from '@/api/anli/apis'
     import { getFuList as news } from '@/api/fuwu/apis'
-
     import { ref, watch, nextTick, reactive, onMounted, defineProps } from 'vue'
     const props = defineProps({
         formData: {
@@ -137,7 +138,7 @@
     const fuWuList = ref([])
     const num = ref(0)
     const tableData = ref({})
-
+    const mailList = ref([])
     const userCate = ref(null)
     const biao = ref<HTMLElement | null>(null)
     // 计算属性，根据高度决定是否显示详细信息
@@ -192,6 +193,11 @@
         }
         try {
             let res = await getAnList(query)
+            if (res.data.list.length) {
+                active.value = 0
+            } else {
+                return
+            }
             tableData.value = res.data.list
             // console.log(tableData.value, '测试')
         } catch (error) {
@@ -209,9 +215,9 @@
     watch(
         () => props.formData.id,
         () => {
-            getFuwuList(props.formData.id)
-            getAnLists(props.formData.id)
-            getFuLists()
+            Promise.all([getAnLists(props.formData.id), getFuLists()]).then(() => {
+                getFuwuList(props.formData.id)
+            })
         },
     )
     // 检查高度
@@ -243,11 +249,23 @@
     }
     const getFuwuList = async (id) => {
         let query = {
+            page: 1,
+            pageSize: 1000,
             shopId: id,
         }
         try {
             let res = await getFuList(query)
             userCate.value = res.data.list
+            mailList.value = res.data.list.filter((item) => {
+                return item.is_main == 1
+            })
+            if (tableData.value.length) {
+                active.value = 0
+            } else if (mailList.value.length) {
+                active.value = 9999999999
+            } else {
+                active.value = userCate.value[0].type_id
+            }
             userCate.value.forEach((item) => {
                 item.arr = item.label_name.split(',')
                 item.arr1 = item.price_range.split(',')

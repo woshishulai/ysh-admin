@@ -275,10 +275,11 @@
         payment: 1, //微信 3线下
         phone: '',
     })
-    const details = ref('')
+    const details = ref({})
     const shangs = ref({})
     const detailss = (items) => {
-        details.value = items.orderid + ''
+        details.value.shop_id = items.shop_id
+        details.value.orderid = items.orderid
         detailsss.value.show()
     }
     const changeDing = (item) => {

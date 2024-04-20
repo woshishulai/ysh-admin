@@ -35,11 +35,23 @@ export function getTimeList(data) {
         data: encryptedData,
     })
 }
+//删除时间列表
+export function removeTimeLists(data) {
+    let encryptedData = codeParams(data)
+    return request({
+        url: 'v1/bm/Shop/workhoursDel',
+        method: 'post',
+        headers: {
+            apiKey: 'YW5uaWVraWRzQXBp',
+        },
+        data: encryptedData,
+    })
+}
 //添加编辑
 export function changeTimeList(data) {
     let encryptedData = codeParams(data)
     return request({
-        url: 'v1/bm/Shop/workhoursAddorEdit',
+        url: 'v1/bm/Shop/batchWorkhoursAddorEdit',
         method: 'post',
         headers: {
             apiKey: 'YW5uaWVraWRzQXBp',

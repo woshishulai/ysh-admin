@@ -45,6 +45,7 @@
     let props = defineProps({
         query: Object,
     })
+    const weekLists = ref([])
     const rules = reactive({
         week: [{ required: true, message: '请选择营业时间', trigger: 'blur' }],
         status: [{ required: true, message: '请选择状态', trigger: 'blur' }],
@@ -52,7 +53,7 @@
         end_time: [{ required: true, message: '请选择结束营业时间', trigger: 'blur' }],
     })
     const weekList = reactive({
-        checked1: true,
+        checked1: false,
         checked2: false,
         checked3: false,
         checked4: false,
@@ -74,11 +75,19 @@
     }
 
     const updateCheck = (index) => {
-        for (let i = 1; i <= 7; i++) {
-            weekList[`checked${i}`] = i === index
-            formData.value.week = index.toString()
+        const currentWeek = weekLists.value.slice()
+        const exists = currentWeek.includes(index)
+        if (exists) {
+            const indexToRemove = currentWeek.indexOf(index)
+            currentWeek.splice(indexToRemove, 1)
+        } else {
+            currentWeek.push(index)
         }
-        console.log(formData.value)
+        weekLists.value = currentWeek
+        for (let i = 1; i <= 7; i++) {
+            weekList[`checked${i}`] = weekLists.value.includes(i)
+        }
+        formData.value.week = weekLists.value.join(',')
     }
     const route = useRoute()
 
@@ -89,7 +98,7 @@
 
     const formData = ref({
         userId: UserStore.userInfo.userId,
-        shop_id: props.query.id,
+        shop_id: props.query.id + '' || UserStore.userInfo.shopId,
         week: '1',
         status: '1',
         start_time: '',
@@ -122,10 +131,10 @@
         formData.start_time = formattedStartTime
         formData.end_time = formattedEndTime
         let params = {
-            userId: formData.value.userId,
+            userId: formData.value.userId + '',
             week: formData.value.week,
             status: formData.value.status,
-            shop_id: props.query.shop_id,
+            shop_id: props.query.shop_id + '',
             start_time: formData.start_time,
             end_time: formData.end_time,
         }

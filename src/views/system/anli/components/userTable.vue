@@ -88,6 +88,8 @@
         async (newQuery) => {
             loading.value = true
             query.shop_id = props.id
+            console.log(query.shop_id)
+
             try {
                 let res = await getAnList(query)
                 tableData.value = res.data

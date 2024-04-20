@@ -40,6 +40,8 @@
     import { useUserStore } from '@/store/modules/user'
     import { useSettingStore } from '@/store/modules/setting'
     import { addAnListInfo } from '@/api/anli/apis'
+    import { ElNotification } from 'element-plus'
+
     const SettingStore = useSettingStore()
     const ruleFormRef = ref<FormInstance>()
     const dialogVisible = ref()
@@ -109,7 +111,22 @@
             if (valid) {
                 try {
                     let res = await addAnListInfo(formData.value)
-                    SettingStore.setReload()
+                    if (res.code != 1) {
+                        ElNotification({
+                            message: res.msg,
+                            type: 'error',
+                            duration: 3000,
+                        })
+                    } else {
+                        ElNotification({
+                            message: res.msg,
+                            type: 'success',
+                            duration: 800,
+                        })
+                        setTimeout(() => {
+                            SettingStore.setReload()
+                        }, 800)
+                    }
                 } catch (error) {
                     console.log(error)
                 }

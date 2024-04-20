@@ -50,9 +50,12 @@
                     </el-table-column>
                     <el-table-column prop="start_time" label="开始营业时间" align="center" />
                     <el-table-column prop="end_time" label="结束营业时间" align="center" />
-                    <el-table-column label="操作" align="center" width="160" fixed="right">
+                    <el-table-column label="操作" align="center" width="190" fixed="right">
                         <template #default="scope">
-                            <el-button type="primary" size="small" icon="Edit" @click="editHandler(scope.row)"> 编辑 </el-button>
+                            <div style="display: flex; align-items: center; gap: 20px">
+                                <el-button type="primary" size="small" icon="Edit" @click="editHandler(scope.row)"> 编辑 </el-button>
+                                <el-button type="danger" @click="removePings(scope.row.id)" icon="Delete" size="small"> 删除 </el-button>
+                            </div>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -64,8 +67,9 @@
 </template>
 <script lang="ts" setup>
     import { onMounted, reactive, ref, watch } from 'vue'
-    import { getTimeList } from '@/api/time/apis'
+    import { getTimeList, removeTimeLists } from '@/api/time/apis'
     import CustomeRef from './CustomeRef.vue'
+    import { ElNotification } from 'element-plus'
     import UserDialog from './userDialog.vue'
     import { useUserStore } from '@/store/modules/user'
     import { useSettingStore } from '@/store/modules/setting'
@@ -133,9 +137,25 @@
         params.value.week = items.week
         params.value.status = items.status
         params.value.userId = user.userInfo.userId
-        params.value.shop_id = query.shop_id
+        params.value.shop_id = query.shop_id || user.userInfo.shopId
         params.value.id = items.id
         userDialog.value.show()
+    }
+    const removePings = async (items) => {
+        let querys = {
+            shop_id: query.shop_id || user.userInfo.shopId,
+            id: items,
+        }
+        let res = await removeTimeLists(querys)
+        if (res.code == 1) {
+            SettingStore.setReload()
+        } else {
+            ElNotification({
+                message: res.msg,
+                type: 'error',
+                duration: 3000,
+            })
+        }
     }
     const add = () => {
         menuDrawerRef.value.show()

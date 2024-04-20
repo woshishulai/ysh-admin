@@ -311,8 +311,8 @@
         () => props.details,
         (newQuery, oldQuery) => {
             let query = {
-                orderid: props.details,
-                shopId: role == 1 ? '' : UserStore.userInfo.shopId,
+                orderid: props.details.orderid,
+                shopId: role == 1 ? props.details.shop_id : UserStore.userInfo.shopId,
             }
             console.log(query)
 
@@ -330,7 +330,7 @@
     const change = (tab) => {
         list.value = []
         let query = {
-            orderid: props.details,
+            orderid: props.details.orderid,
         }
         active.value = tab
         if (active.value == '支付记录') {
@@ -340,14 +340,14 @@
             // getShenils(query)
         } else if (active.value == '退款记录') {
             let query = {
-                orderid: props.details,
-                shopId: role == 1 ? '' : UserStore.userInfo.shopId,
+                orderid: props.details.orderid,
+                shopId: role == 1 ? props.details.shop_id : UserStore.userInfo.shopId,
             }
             getTui(query)
         } else if (active.value == '结转记录') {
             let query = {
-                orderid: props.details,
-                shopId: role == 1 ? '' : UserStore.userInfo.shopId,
+                orderid: props.details.orderid,
+                shopId: role == 1 ? props.details.shop_id : UserStore.userInfo.shopId,
             }
             getJie(query)
         }

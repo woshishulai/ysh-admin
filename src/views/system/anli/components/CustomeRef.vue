@@ -30,19 +30,39 @@
     import WangEdior from '@/components/WangEdior/index.vue'
     import { addAnListInfo } from '@/api/anli/apis'
     import { useRoute } from 'vue-router'
+    import { ElNotification } from 'element-plus'
+
     const route = useRoute()
     const SettingStore = useSettingStore()
     const ruleFormRef = ref<FormInstance>()
     const dialogVisible = ref()
     const UserStore = useUserStore()
     const img = ref('')
+    const props = defineProps({
+        query: {
+            type: Object,
+            default: {},
+        },
+    })
     const rules = reactive({
         title: [{ required: true, message: '请输入案例标题', trigger: 'blur' }],
     })
     const formData = ref({
         userId: UserStore.userInfo.userId,
-        shop_id: UserStore.userInfo.shopId,
+        shop_id: props.query.id + '' || UserStore.userInfo.shopId,
     })
+    watch(
+        () => props.query.id,
+        async (newQuery) => {
+            formData.value.shop_id = props.query.shop_id
+            console.log(formData.value)
+        },
+        {
+            immediate: true,
+            deep: true,
+        },
+    )
+
     const handleClose = async () => {
         await ruleFormRef.value.validate(async (valid, fields) => {
             // 使用正则表达式替换样式属性
@@ -58,7 +78,22 @@
             if (valid) {
                 try {
                     let res = await addAnListInfo(formData.value)
-                    SettingStore.setReload()
+                    if (res.code != 1) {
+                        ElNotification({
+                            message: res.msg,
+                            type: 'error',
+                            duration: 3000,
+                        })
+                    } else {
+                        ElNotification({
+                            message: res.msg,
+                            type: 'success',
+                            duration: 800,
+                        })
+                        setTimeout(() => {
+                            SettingStore.setReload()
+                        }, 800)
+                    }
                 } catch (error) {
                     console.log(error)
                 }
