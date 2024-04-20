@@ -245,6 +245,7 @@
             background-color: #fff;
             :deep(p) {
                 margin: 0;
+                word-wrap: break-word;
                 img {
                     max-width: 100%;
                     margin-bottom: 18px;

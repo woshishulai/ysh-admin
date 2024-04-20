@@ -37,7 +37,7 @@
             </div>
             <div class="pagination">
                 <el-pagination
-                    v-model:currentPage="tableData.page"
+                    v-model:currentPage="pages"
                     :page-size="tableData.pageSize"
                     :page-sizes="[5, 10, 15, 20]"
                     background
@@ -64,9 +64,11 @@
     const tableData = ref([])
     const userDialog = ref()
     const loading = ref(true)
+    const pagessssss = Number(localStorage.getItem('bq')) || 1
+    const pages = ref(pagessssss)
     const title = ref('')
     const query = reactive({
-        page: '',
+        page: pages.value,
         pageSize: '',
         label_name: '',
     })
@@ -150,6 +152,7 @@
     const handleCurrentChange = async (val: number) => {
         query.page = val
         loading.value = true
+        localStorage.setItem('bq', val)
         try {
             let res = await getBiaoList(query)
             tableData.value = res.data

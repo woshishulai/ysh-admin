@@ -85,7 +85,7 @@
             </div>
             <div class="pagination">
                 <el-pagination
-                    v-model:currentPage="tableData.page"
+                    v-model:currentPage="pages"
                     :page-size="tableData.pageSize"
                     :page-sizes="[5, 10, 15, 20]"
                     background
@@ -126,6 +126,8 @@
     const UserStore = useUserStore()
     const dialogVisible = ref(false)
     const dialogVisibless = ref(false)
+    const pagessssss = Number(localStorage.getItem('dp')) || 1
+    const pages = ref(pagessssss)
     const detaissss = ref(false)
     const role = UserStore.userInfo.isAdmin
     const details = ref({})
@@ -152,7 +154,7 @@
     })
     const menuDrawerRef = ref(null)
     const query = reactive({
-        page: 1,
+        page: pages.value,
         pageSize: 10,
         shopName: '',
         id: '',
@@ -231,6 +233,8 @@
     const handleCurrentChange = async (val: number) => {
         query.page = val
         loading.value = true
+        localStorage.setItem('dp', val)
+
         try {
             let res = await getDianPuList(query)
             tableData.value = res.data

@@ -98,6 +98,8 @@
     import { changeStatusShop, getDianPuDetails, addShopInfo } from '@/api/dianpu/apis'
     const ruleFormRef = ref<FormInstance>()
     const UserStore = useUserStore()
+    const SettingStore = useSettingStore()
+
     const dialogVisibless = ref(false)
     const role = UserStore.userInfo.isAdmin
     const ids = ref('')
@@ -126,12 +128,18 @@
                     if (formData.value.status || formData.value.status == 0) {
                         if (formData.value.status == 0) {
                             checked1.value = true
+                            checked2.value = false
+                            checked3.value = false
                         }
                         if (formData.value.status == 1) {
                             checked2.value = true
+                            checked1.value = false
+                            checked3.value = false
                         }
                         if (formData.value.status == 2) {
                             checked3.value = true
+                            checked1.value = false
+                            checked2.value = false
                         }
                         if (!formData.value.details) {
                             formData.value.details = ''
@@ -202,8 +210,8 @@
         const plainText = formData.value.details.replace(/<[^>]+>/g, '')
         if (plainText.length < 50) {
             return Promise.reject(new Error('公司详情至少输入50字'))
-        } else if (plainText.length > 200) {
-            return Promise.reject(new Error('公司详情最多输入200字'))
+        } else if (plainText.length > 800) {
+            return Promise.reject(new Error('公司详情最多输入800字'))
         } else {
             return Promise.resolve()
         }
@@ -279,6 +287,9 @@
                             type: 'success',
                             duration: 3000,
                         })
+                        setTimeout(() => {
+                            SettingStore.setReload()
+                        }, 1000)
                     }
                 } catch (error) {
                     console.log(error)

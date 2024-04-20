@@ -103,7 +103,7 @@
             </div>
             <div class="pagination">
                 <el-pagination
-                    v-model:currentPage="tableData.page"
+                    v-model:currentPage="pages"
                     :page-size="tableData.pageSize"
                     :page-sizes="[5, 10, 15, 20]"
                     background
@@ -170,10 +170,11 @@
     import { Search } from '@element-plus/icons-vue'
     import { getFuList as shuju } from '@/api/fu/apis'
     import { ElNotification } from 'element-plus'
-
     const shangsss = ref(null)
     const SettingStore = useSettingStore()
     const ruleFormRef = ref<FormInstance>()
+    const pagessssss = Number(localStorage.getItem('dd')) || 1
+    const pages = ref(pagessssss)
     const getPaymentStatusColor = (status) => {
         return status === 1 || status === 9 ? 'green' : 'red'
     }
@@ -369,7 +370,7 @@
     const detailsss = ref(null)
 
     const query = reactive({
-        page: 1,
+        page: pages.value,
         pageSize: 10,
         shopId: role == 1 ? '' : UserStore.userInfo.shopId,
         // shopId: '',
@@ -463,6 +464,7 @@
     }
     const handleCurrentChange = async (val: number) => {
         query.page = val
+        localStorage.setItem('dd', val)
         loading.value = true
         try {
             let res = await getFuList(query)

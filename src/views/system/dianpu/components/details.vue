@@ -364,6 +364,7 @@
                     overflow: hidden;
                 }
                 :deep(p) {
+                    word-wrap: break-word;
                     margin-bottom: 0;
                     margin-top: 6px;
                     color: rgba(92, 92, 92, 1);
@@ -558,6 +559,7 @@
                     }
                     .textss {
                         :deep(p) {
+                            word-wrap: break-word;
                             margin: 0;
                             // margin: 12px 0 0;
                             font-size: 13px;

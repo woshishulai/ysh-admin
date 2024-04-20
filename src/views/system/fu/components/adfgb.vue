@@ -249,14 +249,18 @@
             background-color: #fff;
             :deep(p) {
                 margin: 0;
+                word-wrap: break-word;
                 img {
                     max-width: 100%;
                     margin-bottom: 18px;
                 }
                 span {
+                    word-wrap: break-word;
                     color: rgba(37, 37, 37, 1) !important;
                     font-size: 13px !important;
                     line-height: 24px;
+                    width: 100%;
+                    display: block;
                 }
             }
         }

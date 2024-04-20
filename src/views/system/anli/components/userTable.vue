@@ -11,7 +11,7 @@
             </el-form>
         </div> -->
         <div class="footer">
-            <div class="util" v-if="role != 1">
+            <div class="util">
                 <el-button type="primary" @click="add">
                     <el-icon><Plus /></el-icon>
                     新增编辑店铺案例

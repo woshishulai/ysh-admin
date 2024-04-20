@@ -35,7 +35,7 @@
             </div>
             <div class="pagination">
                 <el-pagination
-                    v-model:currentPage="tableData.page"
+                    v-model:currentPage="pages"
                     :page-size="tableData.pageSize"
                     :page-sizes="[5, 10, 15, 20]"
                     background
@@ -62,10 +62,12 @@
     import UserDialog from './userDialog.vue'
     const tableData = ref([])
     const userDialog = ref()
+    const pagessssss = Number(localStorage.getItem('fwb')) || 1
+    const pages = ref(pagessssss)
     const loading = ref(true)
     const title = ref('')
     const query = reactive({
-        page: '',
+        page: pages.value,
         pageSize: '',
     })
     const params = reactive({
@@ -138,6 +140,7 @@
     }
 
     const handleCurrentChange = async (val: number) => {
+        localStorage.setItem('fwb', val)
         query.page = val
         loading.value = true
         try {

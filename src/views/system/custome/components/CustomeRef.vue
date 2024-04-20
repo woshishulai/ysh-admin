@@ -75,7 +75,7 @@
         ],
         username: [
             { required: true, message: '请输入账号', trigger: 'blur' },
-            { min: 6, max: 99, message: '长度保持在6个字符以上', trigger: 'blur' },
+            { min: 5, max: 99, message: '长度保持在5个字符以上', trigger: 'blur' },
         ],
         status: [{ required: true, message: '请选择状态', trigger: 'blur' }],
         roleId: [{ required: true, message: '请选择角色', trigger: 'blur' }],
@@ -121,6 +121,7 @@
     }
     const handleClose = async () => {
         formData.value.roleId = 0
+
         await ruleFormRef.value.validate(async (valid, fields) => {
             if (valid) {
                 try {

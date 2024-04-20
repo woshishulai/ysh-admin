@@ -103,7 +103,7 @@
             </div>
             <div class="pagination" v-if="tableData">
                 <el-pagination
-                    v-model:currentPage="tableData.page"
+                    v-model:currentPage="pages"
                     :page-size="tableData.pageSize"
                     :page-sizes="[5, 10, 15, 20]"
                     background
@@ -152,6 +152,8 @@
     import { useUserStore } from '@/store/modules/user'
     const UserStore = useUserStore()
     const Sdetailsss = ref(false)
+    const pagessssss = Number(localStorage.getItem('pj')) || 1
+    const pages = ref(pagessssss)
     const xin = ref('')
     const changeXIn = (items) => {
         xin.value = items
@@ -252,7 +254,7 @@
     const loading = ref(true)
     const detailsss = ref(null)
     const query = reactive({
-        page: 1,
+        page: pages.value,
         pageSize: 10,
         id: '',
         nickname: '',
@@ -345,6 +347,8 @@
     const handleCurrentChange = async (val: number) => {
         query.page = val
         loading.value = true
+        localStorage.setItem('pj', val)
+
         try {
             let res = await getPingList(query)
             tableData.value = res.data

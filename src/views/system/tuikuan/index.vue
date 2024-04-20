@@ -47,7 +47,7 @@
             </div>
             <div class="pagination">
                 <el-pagination
-                    v-model:currentPage="tableData.page"
+                    v-model:currentPage="pages"
                     :page-size="tableData.pageSize"
                     :page-sizes="[5, 10, 15, 20]"
                     background
@@ -71,9 +71,11 @@
     const tableData = ref([])
     const loading = ref(true)
     const params = ref(null)
+    const pagessssss = Number(localStorage.getItem('tk')) || 1
+    const pages = ref(pagessssss)
     const role = UserStore.userInfo.isAdmin
     const query = reactive({
-        page: 1,
+        page: pages.value,
         pageSize: 10,
         outTradeNo: '',
         shopId: role == 1 ? '' : UserStore.userInfo.shopId,
@@ -91,6 +93,7 @@
     const handleSizeChange = async (val: number) => {
         query.pageSize = val
         loading.value = true
+        localStorage.setItem('tk', val)
         try {
             let res = await getTuiList(query)
             tableData.value = res.data

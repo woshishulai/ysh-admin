@@ -47,7 +47,7 @@
             </div>
             <div class="pagination">
                 <el-pagination
-                    v-model:currentPage="tableData.page"
+                    v-model:currentPage="pages"
                     :page-size="tableData.pageSize"
                     :page-sizes="[5, 10, 15, 20]"
                     background
@@ -78,8 +78,10 @@
     const loading = ref(true)
     const params = ref(null)
     const role = UserStore.userInfo.isAdmin
+    const pagessssss = Number(localStorage.getItem('banner')) || 1
+    const pages = ref(pagessssss)
     const query = reactive({
-        page: 1,
+        page: pages.value,
         pageSize: 10,
     })
     onMounted(async () => {
@@ -105,6 +107,7 @@
     }
 
     const handleCurrentChange = async (val: number) => {
+        localStorage.setItem('banner', val)
         query.page = val
         loading.value = true
         try {

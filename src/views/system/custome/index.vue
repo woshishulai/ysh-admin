@@ -36,12 +36,14 @@
                             <el-button type="danger" v-else size="small"> 冻结 </el-button> -->
                         </template>
                     </el-table-column>
-                    <el-table-column label="状态" align="center">
+                    <el-table-column label="状态" align="center" width="150">
                         <template #default="scope">
-                            <span class="green" v-if="scope.row.status == 1">正常</span>
-                            <span class="red" v-if="scope.row.status == 2">停用</span>
-                            <!-- <el-button type="success" v-if="scope.row.status == 1" size="small"> 正常 </el-button>
-                            <el-button type="danger" v-else size="small"> 冻结 </el-button> -->
+                            <el-button type="success" @click="changeStatus(scope.row)" v-if="scope.row.status == 1" size="small">
+                                正常
+                            </el-button>
+                            <el-button type="danger" @click="changeStatus(scope.row)" v-if="scope.row.status == 2" size="small">
+                                停用
+                            </el-button>
                         </template>
                     </el-table-column>
                     <el-table-column prop="status" align="center" width="170" label="操作" fixed="right">
@@ -59,7 +61,7 @@
             </div>
             <div class="pagination">
                 <el-pagination
-                    v-model:currentPage="tableData.page"
+                    v-model:currentPage="pages"
                     :page-size="tableData.pageSize"
                     :page-sizes="[10, 15, 18, 23]"
                     background
@@ -82,7 +84,9 @@
     import { getYongHuList, changeYongHuList, removeYongHuAPi } from '@/api/yonghu/apis'
     import { getAdminList } from '@/api/juese/apis'
     import { removeMenuAPi } from '@/api/caidan/apis'
+    import { ElNotification } from 'element-plus'
     import { useUserStore } from '@/store/modules/user'
+    import { addYongHuList } from '@/api/yonghu/apis'
     import { useSettingStore } from '@/store/modules/setting'
     const SettingStore = useSettingStore()
     const user = useUserStore()
@@ -90,8 +94,10 @@
     const loading = ref(true)
     const selects = ref([])
     const selectss = ref([])
+    const pagessssss = Number(localStorage.getItem('sh')) || 1
+    const pages = ref(pagessssss)
     const params = reactive({
-        page: 1,
+        page: pages.value,
         pageSize: 10,
         username: '',
         shopName: '',
@@ -136,8 +142,42 @@
             console.log(error)
         }
     }
+    //修改状态
+    const changeStatus = async (items) => {
+        let status
+        if (items.status == 0) {
+            status = 1
+        } else if (items.status == 1) {
+            status = 2
+        } else if (items.status == 2) {
+            status = 1
+        }
+        let query = items
+        query.status = status
+        query.roleId = 0
+        query.password = ''
+        query.userId = user.userInfo.userId
+        query.shopId = items.shop_id
+        delete query.company_type
+        delete query.shop_name
+        try {
+            let res = await addYongHuList(query)
+            if (res.code == 1) {
+                SettingStore.setReload()
+            } else {
+                ElNotification({
+                    message: res.msg,
+                    type: 'error',
+                    duration: 3000,
+                })
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
     const handleCurrentChange = async (val: number) => {
         params.page = val
+        localStorage.setItem('sh', val)
         loading.value = true
         try {
             let res = await getYongHuList(params)

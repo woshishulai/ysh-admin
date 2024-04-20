@@ -79,7 +79,7 @@
             <div class="pagination">
                 <el-pagination
                     v-if="tableData.total > 10"
-                    v-model:currentPage="tableData.page"
+                    v-model:currentPage="pages"
                     :page-size="tableData.pageSize"
                     :page-sizes="[10, 15, 18, 23]"
                     background
@@ -105,8 +105,10 @@
     const SettingStore = useSettingStore()
     const user = useUserStore()
     const tableData = ref({})
+    const pagessssss = Number(localStorage.getItem('sp')) || 1
+    const pages = ref(pagessssss)
     let querys = reactive({
-        page: 1,
+        page: pages.value,
         pageSize: 10,
         status: '',
     })
@@ -132,6 +134,7 @@
     }
     const handleCurrentChange = async (val: number) => {
         querys.page = val
+        localStorage.setItem('sp', val)
         loading.value = true
         try {
             let res = await getShenList(querys)

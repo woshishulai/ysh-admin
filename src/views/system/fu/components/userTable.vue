@@ -80,9 +80,15 @@
 
                     <el-table-column label="状态" align="center" width="150">
                         <template #default="scope">
-                            <span class="blue" v-if="scope.row.status == 0">预备中</span>
-                            <span class="green" v-if="scope.row.status == 1">在线</span>
-                            <span class="red" v-if="scope.row.status == 2">下线</span>
+                            <el-button type="primary" @click="changeStatus(scope.row)" v-if="scope.row.status == 0" size="small">
+                                预备中
+                            </el-button>
+                            <el-button type="success" @click="changeStatus(scope.row)" v-if="scope.row.status == 1" size="small">
+                                在线
+                            </el-button>
+                            <el-button type="danger" @click="changeStatus(scope.row)" v-if="scope.row.status == 2" size="small">
+                                下线
+                            </el-button>
                         </template>
                     </el-table-column>
                     <el-table-column prop="add_time" label="添加时间" width="200" align="center" />
@@ -97,7 +103,7 @@
             </div>
             <div class="pagination">
                 <el-pagination
-                    v-model:currentPage="tableData.page"
+                    v-model:currentPage="pages"
                     :page-size="tableData.pageSize"
                     :page-sizes="[5, 10, 15, 20]"
                     background
@@ -122,6 +128,7 @@
     import Customeref from './CustomeRef.vue'
     import Details from './adfgb.vue'
     import { onMounted, reactive, ref } from 'vue'
+    import { changeFuApi } from '@/api/fu/apis'
     import { getFuList, removeFu, getDianPuDetails } from '@/api/fu/apis'
     import { useSettingStore } from '@/store/modules/setting'
     import { Search } from '@element-plus/icons-vue'
@@ -132,6 +139,8 @@
     import UserDialog from './userDialog.vue'
     const dddd = ref({})
     const detailsss = ref(false)
+    const pagessssss = Number(localStorage.getItem('fwl')) || 1
+    const pages = ref(pagessssss)
     const detailss = async (items) => {
         detailsss.value = true
         let query = {
@@ -149,7 +158,7 @@
     const menuDrawerRef = ref(null)
     const queryss = reactive({})
     const query = reactive({
-        page: 1,
+        page: pages.value,
         pageSize: 10,
         name: '',
         shopId: role == 1 ? '' : UserStore.userInfo.shopId,
@@ -164,6 +173,25 @@
             console.log(error)
         }
     })
+    //修改状态
+    const changeStatus = async (items) => {
+        let status
+        if (items.status == 0) {
+            status = 1
+        } else if (items.status == 1) {
+            status = 2
+        } else if (items.status == 2) {
+            status = 1
+        }
+        let query = items
+        query.status = status
+        try {
+            let res = await changeFuApi(query)
+            SettingStore.setReload()
+        } catch (error) {
+            console.log(error)
+        }
+    }
     //删除
     const del = (items) => {
         ElMessageBox.confirm('你确定要删除当前项吗?', '温馨提示', {
@@ -244,6 +272,7 @@
 
     const handleCurrentChange = async (val: number) => {
         query.page = val
+        localStorage.setItem('fwl', val)
         loading.value = true
         try {
             let res = await getFuList(query)

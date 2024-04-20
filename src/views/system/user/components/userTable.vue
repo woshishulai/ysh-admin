@@ -60,7 +60,7 @@
             </div>
             <div class="pagination">
                 <el-pagination
-                    v-model:currentPage="tableData.page"
+                    v-model:currentPage="pages"
                     :page-size="tableData.pageSize"
                     background
                     layout="total, sizes, prev, pager, next, jumper"
@@ -102,12 +102,14 @@
     const userDialog = ref()
     const role = UserStore.userInfo.isAdmin
     const loading = ref(true)
+    const pagessssss = Number(localStorage.getItem('kh')) || 1
+    const pages = ref(pagessssss)
     const query = reactive({
         title: '修改昵称',
         time: [],
         startTime: '',
         ednTime: '',
-        page: 1,
+        page: pages.value,
         pageSize: 10,
         id: '',
         // shop_id: role == 1 ? '' : UserStore.userInfo.shopId,
@@ -181,6 +183,7 @@
     }
 
     const handleCurrentChange = async (val: number) => {
+        localStorage.setItem('kh', val)
         query.page = val
         loading.value = true
         try {
