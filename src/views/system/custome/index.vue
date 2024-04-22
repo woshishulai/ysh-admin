@@ -19,23 +19,12 @@
             </div> -->
             <div class="table-wrap">
                 <el-table :data="tableData?.list" style="width: 100%" border default-expand-all row-key="id" class="table">
-                    <el-table-column prop="id" align="center" label="用户id" />
+                    <!-- <el-table-column prop="id" align="center" label="用户id" /> -->
                     <el-table-column prop="username" align="center" label="账号" width="200" />
                     <el-table-column prop="username" align="center" label="邮箱" width="200" />
-                    <el-table-column prop="shop_id" align="center" label="所属店铺id" width="160" />
-                    <el-table-column prop="phone" align="center" width="170" label="手机号" />
                     <el-table-column prop="realname" align="center" label="商户名称" width="160" />
-                    <el-table-column prop="shop_id" align="center" label="所属店铺id" width="160" />
-
+                    <el-table-column prop="shop_id" align="center" label="店铺id" width="160" />
                     <el-table-column prop="shop_name" align="center" label="店铺名称" width="160" />
-                    <el-table-column label="公司类型" align="center" width="160">
-                        <template #default="scope">
-                            <span class="green" v-if="scope.row.company_type == 1">公司</span>
-                            <span class="blue" v-if="scope.row.company_type == 2">个人</span>
-                            <!-- <el-button type="success" v-if="scope.row.status == 1" size="small"> 正常 </el-button>
-                            <el-button type="danger" v-else size="small"> 冻结 </el-button> -->
-                        </template>
-                    </el-table-column>
                     <el-table-column label="状态" align="center" width="150">
                         <template #default="scope">
                             <el-button type="success" @click="changeStatus(scope.row)" v-if="scope.row.status == 1" size="small">
@@ -46,6 +35,17 @@
                             </el-button>
                         </template>
                     </el-table-column>
+                    <el-table-column prop="phone" align="center" width="170" label="手机号" />
+                    <el-table-column prop="realname" align="center" label="商户名称" width="160" />
+                    <el-table-column label="类型" align="center" width="160">
+                        <template #default="scope">
+                            <span class="green" v-if="scope.row.company_type == 1">公司</span>
+                            <span class="blue" v-if="scope.row.company_type == 2">个人</span>
+                            <!-- <el-button type="success" v-if="scope.row.status == 1" size="small"> 正常 </el-button>
+                            <el-button type="danger" v-else size="small"> 冻结 </el-button> -->
+                        </template>
+                    </el-table-column>
+
                     <el-table-column prop="status" align="center" width="170" label="操作" fixed="right">
                         <template #default="scope">
                             <div class="cell">
@@ -163,7 +163,11 @@
         try {
             let res = await addYongHuList(query)
             if (res.code == 1) {
-                SettingStore.setReload()
+                ElNotification({
+                    message: res.msg,
+                    type: 'success',
+                    duration: 3000,
+                })
             } else {
                 ElNotification({
                     message: res.msg,

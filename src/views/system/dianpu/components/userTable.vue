@@ -19,7 +19,7 @@
             </div> -->
             <div class="table-inner">
                 <el-table v-loading="loading" :data="tableData?.list" style="width: 100%; height: 100%" border>
-                    <el-table-column prop="id" label="用户id" align="center" />
+                    <el-table-column prop="id" label="店铺id" align="center" />
                     <el-table-column prop="shop_name" width="120" label="店铺名称" align="center" />
                     <el-table-column prop="company_name" width="120" label="公司名称" align="center" />
                     <el-table-column label="照片" width="100" align="center">
@@ -35,6 +35,19 @@
                                     fit="cover"
                             /></div>
                             <img style="width: 60px; height: 60px" v-else src="@/assets/image/login/shops.png" alt="" />
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="状态" align="center" width="150">
+                        <template #default="scope">
+                            <el-button type="primary" @click="changeStatus(scope.row)" v-if="scope.row.status == 0" size="small">
+                                预备中
+                            </el-button>
+                            <el-button type="success" @click="changeStatus(scope.row)" v-if="scope.row.status == 1" size="small">
+                                在线
+                            </el-button>
+                            <el-button type="danger" @click="changeStatus(scope.row)" v-if="scope.row.status == 2" size="small">
+                                下线
+                            </el-button>
                         </template>
                     </el-table-column>
                     <!-- <el-table-column prop="head_photo" label="照片" align="center" /> -->
@@ -60,19 +73,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="add_time" label="添加时间" width="200" align="center" />
-                    <el-table-column label="状态" align="center" width="150">
-                        <template #default="scope">
-                            <el-button type="primary" @click="changeStatus(scope.row)" v-if="scope.row.status == 0" size="small">
-                                预备中
-                            </el-button>
-                            <el-button type="success" @click="changeStatus(scope.row)" v-if="scope.row.status == 1" size="small">
-                                在线
-                            </el-button>
-                            <el-button type="danger" @click="changeStatus(scope.row)" v-if="scope.row.status == 2" size="small">
-                                下线
-                            </el-button>
-                        </template>
-                    </el-table-column>
+
                     <el-table-column label="查看编辑" align="center" width="360" fixed="right">
                         <template #default="scope">
                             <el-button type="primary" size="small" icon="Edit" @click="editHandler(scope.row)">编辑 </el-button>
@@ -116,6 +117,7 @@
     import { onMounted, reactive, ref } from 'vue'
     import { getDianPuList, changeStatusShop, getDianPuDetails } from '@/api/dianpu/apis'
     import Details from './details.vue'
+    import { ElNotification } from 'element-plus'
     import Time from '@/views/system/time/components/userTable.vue'
     import AnLi from '@/views/system/anli/components/userTable.vue'
     import Siren from '../siren.vue'
@@ -210,7 +212,25 @@
         }
         try {
             let res = await changeStatusShop(query)
-            SettingStore.setReload()
+            if (res.code != 1) {
+                ElNotification({
+                    message: res.msg,
+                    type: 'error',
+                    duration: 3000,
+                })
+            } else {
+                ElNotification({
+                    message: res.msg,
+                    type: 'success',
+                    duration: 3000,
+                })
+                let object = tableData.value.list.findIndex((item) => item.id == items.id)
+                if (tableData.value.list[object].status == 1) {
+                    tableData.value.list[object].status = 2
+                } else if (tableData.value.list[object].status == 2) {
+                    tableData.value.list[object].status = 1
+                } else console.log(object, '测试', tableData.value.list)
+            }
         } catch (error) {
             console.log(error)
         }
