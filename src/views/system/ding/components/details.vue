@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-drawer v-model="dialogVisible" :title="'订单' + props.details + '详情'" size="80%">
+        <el-drawer v-model="dialogVisible" :title="'订单详情'" size="80%">
             <div class="box">
                 <div class="top-info">
                     <div class="left">

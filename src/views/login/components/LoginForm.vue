@@ -85,7 +85,7 @@
                         ElNotification({
                             message: res.msg,
                             type: 'error',
-                            duration: 3000,
+                            duration: 600000,
                         })
                         loading.value = false
                         return

@@ -4,6 +4,9 @@
             <el-form-item label="用户昵称" prop="nickname">
                 <el-input v-model="formData.nickname" placeholder="请输入昵称" />
             </el-form-item>
+            <el-form-item label="排序" prop="sort_type">
+                <el-input type="number" v-model="formData.sort_type" placeholder="请输入排序" />
+            </el-form-item>
         </el-form>
         <template #footer>
             <span class="dialog-footer">
@@ -17,6 +20,8 @@
     import { ElMessageBox, ElMessage, FormInstance } from 'element-plus'
     import { reactive, ref, watch } from 'vue'
     import { changeUserName } from '@/api/user'
+    import { ElNotification } from 'element-plus'
+
     const formData = ref(null)
     const props = defineProps({
         query: {
@@ -36,7 +41,7 @@
     )
     const ruleFormRef = ref<FormInstance>()
     const dialogVisible = ref<boolean>(false)
-
+    const emits = defineEmits(['getUserList'])
     const show = (item = {}) => {
         dialogVisible.value = true
     }
@@ -44,9 +49,21 @@
     const handleClose = async (done: () => void) => {
         try {
             let res = await changeUserName(formData.value)
-            setTimeout(() => {
-                location.reload()
-            }, 500)
+            if (res.code != 1) {
+                ElNotification({
+                    message: res.msg,
+                    type: 'error',
+                    duration: 3000,
+                })
+            } else {
+                ElNotification({
+                    message: res.msg,
+                    type: 'success',
+                    duration: 3000,
+                })
+                dialogVisible.value = false
+                emits('getUserList')
+            }
         } catch (error) {
             console.log(error)
         }

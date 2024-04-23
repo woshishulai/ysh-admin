@@ -2,6 +2,12 @@
     <div class="m-user-table">
         <div class="header">
             <el-form ref="ruleFormRef" :inline="true">
+                <el-form-item label="排序">
+                    <img v-if="query.sort_type == 1" @click="changeSortType(2)" src="@/assets/image/login/sort1.svg" alt="" />
+                    <img v-if="query.sort_type == 2" src="@/assets/image/login/sort11.svg" alt="" />
+                    <img v-if="query.sort_type == 2" @click="changeSortType(1)" src="@/assets/image/login/sort2.svg" alt="" />
+                    <img v-if="query.sort_type == 1" src="@/assets/image/login/sort22.svg" alt="" />
+                </el-form-item>
                 <el-form-item label="选择时间" prop="username">
                     <el-date-picker
                         v-model="query.time"
@@ -11,8 +17,12 @@
                         end-placeholder="指定时间"
                     />
                 </el-form-item>
+
                 <el-form-item>
                     <el-input v-model="query.id" style="width: 240px" placeholder="用户id" />
+                </el-form-item>
+                <el-form-item>
+                    <el-input v-model="query.phone" style="width: 240px" placeholder="用户手机号" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="addHandler">
@@ -83,7 +93,7 @@
                 <el-descriptions-item label="创建时间">{{ userInfos.add_time }} </el-descriptions-item>
             </el-descriptions>
         </el-dialog>
-        <UserDialog :query="query" ref="userDialog" />
+        <UserDialog @getUserList="getUserList" :query="params" ref="userDialog" />
     </div>
 </template>
 <script lang="ts" setup>
@@ -104,6 +114,7 @@
     const loading = ref(true)
     const pagessssss = Number(localStorage.getItem('kh')) || 1
     const pages = ref(pagessssss)
+    const params = ref({})
     const query = reactive({
         title: '修改昵称',
         time: [],
@@ -112,6 +123,8 @@
         page: pages.value,
         pageSize: 10,
         id: '',
+        sort_type: 2,
+        phone: '',
         // shop_id: role == 1 ? '' : UserStore.userInfo.shopId,
     })
     onMounted(async () => {
@@ -119,6 +132,11 @@
             router.push('/')
             return
         }
+        getUserList()
+        loading.value = false
+    })
+    const getUserList = async () => {
+        loading.value = true
         try {
             let res = await getKehuList(query)
             tableData.value = res.data
@@ -126,7 +144,11 @@
             console.log(error)
         }
         loading.value = false
-    })
+    }
+    const changeSortType = (index) => {
+        query.sort_type = index
+        getUserList()
+    }
     function convertToFormat(dateStr) {
         const date = new Date(dateStr)
         let formattedDate = date.toLocaleString('zh-CN', {
@@ -141,6 +163,7 @@
     }
 
     const addHandler = async () => {
+        loading.value = true
         if (query.time.length == 0) {
             query.startTime = ''
             query.ednTime = ''
@@ -152,7 +175,6 @@
         loading.value = true
         try {
             let res = await getKehuList(query)
-            console.log(res)
             tableData.value = res.data
             loading.value = false
         } catch (error) {
@@ -160,9 +182,8 @@
         }
     }
     const editHandler = (row) => {
-        query.id = row.id
-        query.nickname = row.nickname
-        console.log(query)
+        params.value.id = row.id
+        params.value.nickname = row.nickname
         userDialog.value.show(row)
     }
     const detailss = (row) => {
@@ -197,4 +218,20 @@
 </script>
 <style lang="scss" scoped>
     @import '../index';
+    .header {
+        display: flex;
+        align-items: flex-start;
+        img {
+            height: 22px;
+            cursor: pointer;
+            margin-top: 1px;
+            // margin-right: 4px;
+            margin-left: 4px;
+        }
+        .sotrs {
+            display: flex;
+            align-items: center;
+            // margin-top: 3px;
+        }
+    }
 </style>
