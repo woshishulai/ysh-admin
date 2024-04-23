@@ -1,7 +1,13 @@
 <template>
     <div class="m-user-table">
         <div class="header">
-            <el-form ref="ruleFormRef" :model="query" :inline="true">
+            <el-form ref="ruleFormRef" :model="querys" :inline="true">
+                <el-form-item label="排序">
+                    <img v-show="querys.sort_type == 1" @click="changeSortType(2)" src="@/assets/image/login/sort1.svg" alt="" />
+                    <img v-show="querys.sort_type == 2" src="@/assets/image/login/sort11.svg" alt="" />
+                    <img v-show="querys.sort_type == 2" @click="changeSortType(1)" src="@/assets/image/login/sort2.svg" alt="" />
+                    <img v-show="querys.sort_type == 1" src="@/assets/image/login/sort22.svg" alt="" />
+                </el-form-item>
                 <el-form-item label="审批状态" prop="username">
                     <el-select v-model="querys.status" placeholder="请选择店铺状态" style="width: 240px">
                         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
@@ -111,6 +117,7 @@
         page: pages.value,
         pageSize: 10,
         status: '',
+        sort_type: 2,
     })
     onMounted(async () => {
         try {
@@ -131,6 +138,20 @@
         } catch (error) {
             console.log(error)
         }
+    }
+    const changeSortType = async (index) => {
+        loading.value = true
+        querys.sort_type = index
+        querys.page = 1
+        pages.value = 1
+        try {
+            let res = await getShenList(querys)
+            tableData.value = res.data
+            loading.value = false
+        } catch (error) {
+            console.log(error)
+        }
+        loading.value = false
     }
     const handleCurrentChange = async (val: number) => {
         querys.page = val

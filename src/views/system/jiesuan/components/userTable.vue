@@ -2,6 +2,12 @@
     <div class="m-user-table">
         <div class="header">
             <el-form ref="ruleFormRef" :inline="true">
+                <el-form-item label="排序">
+                    <img v-show="query.sort_type == 1" @click="changeSortType(2)" src="@/assets/image/login/sort1.svg" alt="" />
+                    <img v-show="query.sort_type == 2" src="@/assets/image/login/sort11.svg" alt="" />
+                    <img v-show="query.sort_type == 2" @click="changeSortType(1)" src="@/assets/image/login/sort2.svg" alt="" />
+                    <img v-show="query.sort_type == 1" src="@/assets/image/login/sort22.svg" alt="" />
+                </el-form-item>
                 <el-form-item label="店铺id" prop="username" v-if="role == 1">
                     <el-input v-model="query.shopId" placeholder="请输入店铺id" />
                 </el-form-item>
@@ -23,7 +29,7 @@
             <div class="table-inner">
                 <el-table v-loading="loading" :data="tableData?.list" style="width: 100%; height: 100%" border>
                     <el-table-column prop="shop_id" label="商家id" width="200" align="center" />
-                    <el-table-column prop="orderid" label="订单号" width="200" align="center" />
+                    <el-table-column prop="orderid" label="订单号" width="210" align="center" />
                     <el-table-column label="订单状态" width="160" align="center">
                         <template #default="scope">
                             <span :class="getPaymentStatusColor(scope.row.is_pay)">
@@ -149,6 +155,7 @@
         shopId: role == 1 ? '' : UserStore.userInfo.shopId,
         orderid: '',
         is_pay: role == 1 ? '4' : '8',
+        sort_type: 2,
     })
     const params = reactive({
         page: 1,
@@ -166,6 +173,18 @@
             console.log(error)
         }
     })
+    const changeSortType = async (index) => {
+        loading.value = true
+        query.sort_type = index
+        try {
+            let res = await getJieZhuanList(query)
+            tableData.value = res.data
+            loading.value = false
+        } catch (error) {
+            console.log(error)
+        }
+        loading.value = false
+    }
     const options = [
         {
             value: '4',
@@ -207,6 +226,9 @@
     }
     const searchInfo = async () => {
         loading.value = true
+        pages.value = 1
+        query.page = 1
+        params.page = 1
         try {
             let res = await getJieZhuanList(query)
             tableData.value = res.data
@@ -250,7 +272,7 @@
         localStorage.setItem('js', val)
         loading.value = true
         try {
-            let res = await getDianPuList(query)
+            let res = await getJieZhuanList(query)
             tableData.value = res.data
             loading.value = false
         } catch (error) {
@@ -262,5 +284,21 @@
     @import '../index';
     :deep(.el-table .el-table__cell) {
         position: static;
+    }
+    .header {
+        display: flex;
+        align-items: flex-start;
+        img {
+            height: 22px;
+            cursor: pointer;
+            margin-top: 1px;
+            // margin-right: 4px;
+            margin-left: 4px;
+        }
+        .sotrs {
+            display: flex;
+            align-items: center;
+            // margin-top: 3px;
+        }
     }
 </style>

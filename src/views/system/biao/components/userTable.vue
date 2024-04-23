@@ -2,6 +2,12 @@
     <div class="m-user-table">
         <div class="header">
             <el-form ref="ruleFormRef" :inline="true" :model="query">
+                <el-form-item label="排序">
+                    <img v-show="query.sort_type == 1" @click="changeSortType(2)" src="@/assets/image/login/sort1.svg" alt="" />
+                    <img v-show="query.sort_type == 2" src="@/assets/image/login/sort11.svg" alt="" />
+                    <img v-show="query.sort_type == 2" @click="changeSortType(1)" src="@/assets/image/login/sort2.svg" alt="" />
+                    <img v-show="query.sort_type == 1" src="@/assets/image/login/sort22.svg" alt="" />
+                </el-form-item>
                 <el-form-item label="标签查询" prop="username">
                     <el-input style="width: 300px" v-model="query.label_name" placeholder="请输入公司,店铺或邮箱查询" />
                 </el-form-item>
@@ -71,6 +77,7 @@
         page: pages.value,
         pageSize: '',
         label_name: '',
+        sort_type: 2,
     })
     const params = reactive({
         name: '',
@@ -136,7 +143,19 @@
         console.log(params)
         userDialog.value.show()
     }
-
+    const changeSortType = async (index) => {
+        query.sort_type = index
+        query.page = 1
+        pages.value = 1
+        loading.value = true
+        try {
+            let res = await getBiaoList(query)
+            tableData.value = res.data
+        } catch (error) {
+            console.log(error)
+        }
+        loading.value = false
+    }
     const handleSizeChange = async (val: number) => {
         query.pageSize = val
         loading.value = true

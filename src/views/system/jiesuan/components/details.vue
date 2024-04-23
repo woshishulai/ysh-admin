@@ -173,7 +173,7 @@
                     </el-table>
                     <el-table v-loading="loading" v-if="active == '结转记录'" :data="list" style="width: 100%; height: 100%" border>
                         <el-table-column prop="shop_id" label="商家id" width="200" align="center" />
-                        <el-table-column prop="orderid" label="订单号" width="200" align="center" />
+                        <el-table-column prop="orderid" label="订单号" width="210" align="center" />
                         <el-table-column label="订单状态" width="160" align="center">
                             <template #default="scope">
                                 <span :class="getPaymentStatusColor(scope.row.is_pay)">

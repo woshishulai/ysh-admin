@@ -2,6 +2,12 @@
     <div class="m-user-table">
         <div class="header">
             <el-form ref="ruleFormRef" :model="query" :inline="true">
+                <el-form-item label="排序">
+                    <img v-show="query.sort_type == 1" @click="changeSortType(2)" src="@/assets/image/login/sort1.svg" alt="" />
+                    <img v-show="query.sort_type == 2" src="@/assets/image/login/sort11.svg" alt="" />
+                    <img v-show="query.sort_type == 2" @click="changeSortType(1)" src="@/assets/image/login/sort2.svg" alt="" />
+                    <img v-show="query.sort_type == 1" src="@/assets/image/login/sort22.svg" alt="" />
+                </el-form-item>
                 <el-form-item label="店铺id" prop="username" v-if="role == 1">
                     <el-input v-model="query.shopId" placeholder="请输入店铺id" />
                 </el-form-item>
@@ -28,6 +34,7 @@
             </div>
             <div class="table-inner">
                 <el-table v-loading="loading" :data="tableData?.list" style="width: 100%; height: 100%" border>
+                    <el-table-column prop="add_time" label="添加时间" width="200" align="center" />
                     <el-table-column prop="orderid" label="订单号" width="220" align="center" />
                     <el-table-column label="支付状态" width="220" align="center">
                         <template #default="scope">
@@ -68,7 +75,7 @@
                     </el-table-column>
                     <el-table-column prop="goods_name" label="商品名称" width="200" align="center" />
                     <el-table-column prop="price" label="服务商品金额" width="200" align="center" />
-                    <el-table-column prop="add_time" label="添加时间" width="200" align="center" />
+
                     <el-table-column prop="shop_name" width="200" label="商家名" align="center" />
                     <el-table-column prop="nickname" width="200" label="昵称" align="center" />
                     <el-table-column prop="goods_id" label="商品iD" align="center" v-if="role == 1" />
@@ -293,7 +300,17 @@
         const phonePattern = /^[1][3-9]\d{9}$/
         return phonePattern.test(phone)
     }
-
+    const changeSortType = async (index) => {
+        query.sort_type = index
+        loading.value = true
+        try {
+            let res = await getFuList(query)
+            tableData.value = res.data
+        } catch (error) {
+            console.log(error)
+        }
+        loading.value = false
+    }
     const getUserInfos = async () => {
         loading.value = true
         // 检查手机号是否通过校验
@@ -377,6 +394,7 @@
         // shopId: '',
         is_pay: '', //支付状态
         orderid: '',
+        sort_type: 2,
     })
     const params = reactive({
         page: 1,
@@ -397,6 +415,9 @@
     })
     const searchInfo = async () => {
         loading.value = true
+        pages.value = 1
+        query.page = 1
+        params.page = 1
         try {
             let res = await getFuList(query)
             console.log(res)

@@ -2,6 +2,12 @@
     <div class="m-user-table">
         <div class="header">
             <el-form ref="ruleFormRef" :inline="true">
+                <el-form-item label="排序">
+                    <img v-show="query.sort_type == 1" @click="changeSortType(2)" src="@/assets/image/login/sort1.svg" alt="" />
+                    <img v-show="query.sort_type == 2" src="@/assets/image/login/sort11.svg" alt="" />
+                    <img v-show="query.sort_type == 2" @click="changeSortType(1)" src="@/assets/image/login/sort2.svg" alt="" />
+                    <img v-show="query.sort_type == 1" src="@/assets/image/login/sort22.svg" alt="" />
+                </el-form-item>
                 <el-form-item label="店铺id" prop="username" v-if="role == 1">
                     <el-input v-model="query.shopId" placeholder="请输入店铺id" />
                 </el-form-item>
@@ -162,6 +168,7 @@
         pageSize: 10,
         name: '',
         shopId: role == 1 ? '' : UserStore.userInfo.shopId,
+        sort_type: 2,
     })
 
     onMounted(async () => {
@@ -269,7 +276,19 @@
             console.log(error)
         }
     }
-
+    const changeSortType = async (index) => {
+        query.sort_type = index
+        query.page = 1
+        pages.value = 1
+        loading.value = true
+        try {
+            let res = await getFuList(query)
+            tableData.value = res.data
+        } catch (error) {
+            console.log(error)
+        }
+        loading.value = false
+    }
     const handleCurrentChange = async (val: number) => {
         query.page = val
         localStorage.setItem('fwl', val)

@@ -2,6 +2,12 @@
     <div class="app-container m-user-table">
         <div class="header">
             <el-form ref="ruleFormRef" :inline="true" :model="params">
+                <el-form-item label="排序">
+                    <img v-show="params.sort_type == 1" @click="changeSortType(2)" src="@/assets/image/login/sort1.svg" alt="" />
+                    <img v-show="params.sort_type == 2" src="@/assets/image/login/sort11.svg" alt="" />
+                    <img v-show="params.sort_type == 2" @click="changeSortType(1)" src="@/assets/image/login/sort2.svg" alt="" />
+                    <img v-show="params.sort_type == 1" src="@/assets/image/login/sort22.svg" alt="" />
+                </el-form-item>
                 <el-form-item label="商户查询" prop="username">
                     <el-input style="width: 300px" v-model="params.username" placeholder="请输入公司,店铺或邮箱查询" />
                 </el-form-item>
@@ -101,6 +107,7 @@
         pageSize: 10,
         username: '',
         shopName: '',
+        sort_type: 2,
     })
     onMounted(async () => {
         try {
@@ -178,6 +185,19 @@
         } catch (error) {
             console.log(error)
         }
+    }
+    const changeSortType = async (index) => {
+        params.sort_type = index
+        params.page = 1
+        pages.value = 1
+        loading.value = true
+        try {
+            let res = await getYongHuList(params)
+            tableData.value = res.data
+        } catch (error) {
+            console.log(error)
+        }
+        loading.value = false
     }
     const handleCurrentChange = async (val: number) => {
         params.page = val

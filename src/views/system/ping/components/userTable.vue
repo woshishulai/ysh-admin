@@ -2,9 +2,12 @@
     <div class="m-user-table">
         <div class="header">
             <el-form ref="ruleFormRef" :inline="true" label-width="100px">
-                <!-- <el-form-item label="id">
-                    <el-input v-model="query.id" placeholder="请输入id" />
-                </el-form-item> -->
+                <el-form-item label="排序">
+                    <img v-show="query.sort_type == 1" @click="changeSortType(2)" src="@/assets/image/login/sort1.svg" alt="" />
+                    <img v-show="query.sort_type == 2" src="@/assets/image/login/sort11.svg" alt="" />
+                    <img v-show="query.sort_type == 2" @click="changeSortType(1)" src="@/assets/image/login/sort2.svg" alt="" />
+                    <img v-show="query.sort_type == 1" src="@/assets/image/login/sort22.svg" alt="" />
+                </el-form-item>
                 <el-form-item label="客户名称">
                     <el-input v-model="query.nickname" placeholder="请输入客户名称" />
                 </el-form-item>
@@ -45,6 +48,7 @@
         <div class="footer">
             <div class="table-inner">
                 <el-table v-loading="loading" :data="tableData?.list" style="width: 100%; height: 100%" border>
+                    <el-table-column label="排序 " prop="id" align="center" width="160" />
                     <el-table-column label="客户名称" prop="nickname" align="center" width="160" />
                     <el-table-column prop="shop_name" label="商家名称" width="160" align="center" />
                     <el-table-column prop="goodsName" label="服务名称" width="160" align="center" />
@@ -268,6 +272,7 @@
         time: [],
         shop_id: UserStore.userInfo.shopId,
         order_id: '',
+        sort_type: 2,
     })
 
     onMounted(async () => {
@@ -343,7 +348,19 @@
             console.log(error)
         }
     }
-
+    const changeSortType = async (index) => {
+        query.sort_type = index
+        query.page = 1
+        pages.value = 1
+        loading.value = true
+        try {
+            let res = await getPingList(query)
+            tableData.value = res.data
+        } catch (error) {
+            console.log(error)
+        }
+        loading.value = false
+    }
     const handleCurrentChange = async (val: number) => {
         query.page = val
         loading.value = true

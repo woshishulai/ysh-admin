@@ -2,6 +2,12 @@
     <div class="m-user-table">
         <div class="header">
             <el-form ref="ruleFormRef" :inline="true">
+                <el-form-item label="排序">
+                    <img v-show="query.sort_type == 1" @click="changeSortType(2)" src="@/assets/image/login/sort1.svg" alt="" />
+                    <img v-show="query.sort_type == 2" src="@/assets/image/login/sort11.svg" alt="" />
+                    <img v-show="query.sort_type == 2" @click="changeSortType(1)" src="@/assets/image/login/sort2.svg" alt="" />
+                    <img v-show="query.sort_type == 1" src="@/assets/image/login/sort22.svg" alt="" />
+                </el-form-item>
                 <el-form-item label="订单号" prop="username">
                     <el-input v-model="query.outTradeNo" placeholder="请输入订单号" />
                 </el-form-item>
@@ -78,6 +84,7 @@
         page: pages.value,
         pageSize: 10,
         outTradeNo: '',
+        sort_type: 2,
         shopId: role == 1 ? '' : UserStore.userInfo.shopId,
         //订单号帅选
     })
@@ -103,6 +110,17 @@
         }
     }
 
+    const changeSortType = async (index) => {
+        loading.value = true
+        query.sort_type = index
+        try {
+            let res = await getTuiList(query)
+            tableData.value = res.data
+            loading.value = false
+        } catch (error) {
+            console.log(error)
+        }
+    }
     const handleCurrentChange = async (val: number) => {
         query.page = val
         loading.value = true
@@ -116,6 +134,9 @@
     }
     const searchInfo = async () => {
         loading.value = true
+        pages.value = 1
+        query.page = 1
+        params.page = 1
         try {
             let res = await getTuiList(query)
             tableData.value = res.data

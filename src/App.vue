@@ -34,4 +34,20 @@
     .svg-icon:focus {
         border: none;
     }
+    .header {
+        display: flex;
+        align-items: flex-start;
+        img {
+            height: 22px;
+            cursor: pointer;
+            margin-top: 1px;
+            // margin-right: 4px;
+            margin-left: 4px;
+        }
+        .sotrs {
+            display: flex;
+            align-items: center;
+            // margin-top: 3px;
+        }
+    }
 </style>
