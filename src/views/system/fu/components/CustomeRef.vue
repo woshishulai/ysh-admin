@@ -208,11 +208,21 @@
     watch(
         () => formData.value?.old_price,
         () => {
-            if (formData.value?.old_price < formData.value?.price_cost) {
+            if (parseFloat(formData.value?.old_price) < parseFloat(formData.value?.price_cost)) {
                 formData.value.price_cost = ''
             }
         },
     )
+    watch(
+        () => formData.value?.qujian1,
+        () => {
+            console.log(parseFloat(formData.value?.qujian1), formData.value?.qujian2)
+            if (parseFloat(formData.value?.qujian1) > parseFloat(formData.value?.qujian2)) {
+                formData.value.qujian2 = ''
+            }
+        },
+    )
+
     const checked4 = ref(false)
     const checked5 = ref(false)
     const showCheck4 = (item) => {
@@ -308,14 +318,14 @@
         formData.value.qujian1 = ''
     }
     const handleClose = async () => {
-        if (checked3.value == true && formData.value.qujian1 > formData.value.qujian2) {
-            ElNotification({
-                message: '区间最高价格不能小于区间最低价格',
-                type: 'error',
-                duration: 3000,
-            })
-            return
-        }
+        // if (checked3.value == true && formData.value.qujian1 > formData.value.qujian2) {
+        //     ElNotification({
+        //         message: '区间最高价格不能小于区间最低价格',
+        //         type: 'error',
+        //         duration: 3000,
+        //     })
+        //     return
+        // }
         console.log(1)
 
         formData.value.label_name = checkList.value.join(',')
