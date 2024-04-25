@@ -40,6 +40,7 @@
             default: {},
         },
     })
+    const emits = defineEmits(['getTableList'])
     watch(
         () => props.query,
         () => {
@@ -120,6 +121,7 @@
                             type: 'success',
                             duration: 3000,
                         })
+                        emits('getTableList')
                     }
                 } catch (error) {
                     console.log(error)

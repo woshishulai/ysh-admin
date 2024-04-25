@@ -162,9 +162,9 @@
                 </el-form-item>
             </el-form>
         </el-dialog>
-        <UserDialog :query="params" ref="userDialog" />
+        <UserDialog @getTableList="getTableList" :query="params" ref="userDialog" />
         <Details ref="detailsss" :details="details" />
-        <Shang ref="shangsss" :change="shangs" />
+        <Shang @getTableList="getTableList" ref="shangsss" :change="shangs" />
     </div>
 </template>
 <script lang="ts" setup>
@@ -404,7 +404,10 @@
         is_pay: '', //支付状态
         orderid: '',
     })
-    onMounted(async () => {
+    onMounted(() => {
+        getTableList()
+    })
+    const getTableList = async () => {
         try {
             let res = await getFuList(query)
             tableData.value = res.data
@@ -412,7 +415,7 @@
         } catch (error) {
             console.log(error)
         }
-    })
+    }
     const searchInfo = async () => {
         loading.value = true
         pages.value = 1

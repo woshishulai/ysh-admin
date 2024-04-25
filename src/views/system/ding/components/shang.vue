@@ -52,6 +52,7 @@
     import { useUserStore } from '@/store/modules/user'
     import { useSettingStore } from '@/store/modules/setting'
     import { ElNotification, ElMessage, FormInstance } from 'element-plus'
+    const emits = defineEmits(['getTableList'])
 
     const UserStore = useUserStore()
     //修改商家接单状态
@@ -175,7 +176,13 @@
                 try {
                     let res = await changeJieZhuanList(formData.value)
                     if (res.code == 1) {
-                        SettingStore.setReload()
+                        ElNotification({
+                            message: res.msg,
+                            type: 'success',
+                            duration: 3000,
+                        })
+                        emits('getTableList')
+                        // SettingStore.setReload()
                     } else {
                         ElNotification({
                             message: res.msg,
