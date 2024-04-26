@@ -89,6 +89,7 @@
                 try {
                     let res = await changeJieZhuanList(formData.value)
                     if (res.code == 1) {
+                        formData.value.ysh_voucher = ''
                         SettingStore.setReload()
                     } else {
                         ElNotification({

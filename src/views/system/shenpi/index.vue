@@ -73,10 +73,11 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="realname" align="center" width="140" label="审批人名称" />
-                    <el-table-column prop="status" align="center" width="140" label="操作" fixed="right">
+                    <el-table-column prop="status" align="center" width="200" label="操作" fixed="right">
                         <template #default="scope">
                             <div class="cell">
                                 <el-button type="primary" size="small" icon="Edit" @click="edit(scope.row)"> 审批 </el-button>
+                                <el-button type="danger" size="small" icon="Delete" @click="del(scope.row)"> 删除 </el-button>
                             </div>
                         </template>
                     </el-table-column>
@@ -103,9 +104,10 @@
 <script lang="ts" setup>
     import { ElMessageBox, FormInstance } from 'element-plus'
     import { reactive, ref, onMounted } from 'vue'
+    import { ElNotification } from 'element-plus'
     import { Plus } from '@element-plus/icons-vue'
     import CustomeRef from './components/CustomeRef.vue'
-    import { getShenList, changeShenList } from '@/api/shenpi/apis'
+    import { getShenList, changeShenList, removeShehnPi } from '@/api/shenpi/apis'
     import { useUserStore } from '@/store/modules/user'
     import { useSettingStore } from '@/store/modules/setting'
     const SettingStore = useSettingStore()
@@ -120,6 +122,9 @@
         sort_type: 2,
     })
     onMounted(async () => {
+        getShenPiList()
+    })
+    const getShenPiList = async () => {
         try {
             let res = await getShenList(querys)
             tableData.value = res.data
@@ -127,7 +132,7 @@
         } catch (err) {
             console.log(err)
         }
-    })
+    }
     const handleSizeChange = async (val: number) => {
         querys.pageSize = val
         loading.value = true
@@ -152,6 +157,39 @@
             console.log(error)
         }
         loading.value = false
+    }
+    //删除
+    const del = (items) => {
+        ElMessageBox.confirm('你确定要删除当前项吗?', '温馨提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+            draggable: true,
+        })
+            .then(async () => {
+                let query = {
+                    id: items.id,
+                }
+                try {
+                    let res = await removeShehnPi(query)
+                    if (res.code != 1) {
+                        ElNotification({
+                            message: res.msg,
+                            type: 'error',
+                            duration: 3000,
+                        })
+                    } else {
+                        ElNotification({
+                            message: res.msg,
+                            type: 'success',
+                            duration: 3000,
+                        })
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            })
+            .catch(() => {})
     }
     const handleCurrentChange = async (val: number) => {
         querys.page = val

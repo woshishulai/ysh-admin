@@ -115,6 +115,17 @@
         () => props.change,
         () => {
             formData.value = props.change
+            if (!formData.value.orderid) {
+                ElNotification({
+                    message: '网络异常将为您刷新重试',
+                    type: 'error',
+                    duration: 3000,
+                })
+                setTimeout(() => {
+                    SettingStore.setReload()
+                }, 1500)
+            }
+
             formData.value.is_pay = formData.value.is_pay + ''
             if (formData.value.handle == 1) {
                 checked1.value = true
@@ -181,6 +192,7 @@
                             type: 'success',
                             duration: 3000,
                         })
+                        formData.value = {}
                         emits('getTableList')
                         // SettingStore.setReload()
                     } else {

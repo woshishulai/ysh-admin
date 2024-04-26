@@ -48,3 +48,16 @@ export function changeShenList(data) {
         data: encryptedData,
     })
 }
+
+//删除审批
+export function removeShehnPi(data) {
+    const encryptedData = codeParams(data)
+    return request({
+        url: 'v1/bm/Applyfor/delApplyRatify',
+        method: 'post',
+        headers: {
+            apiKey: 'YW5uaWVraWRzQXBp',
+        },
+        data: encryptedData,
+    })
+}

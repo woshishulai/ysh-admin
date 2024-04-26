@@ -45,11 +45,20 @@
         () => props.query,
         () => {
             formData.value = props.query
-            console.log(formData.value)
+            console.log(formData.value.orderid, '我是管理')
+            if (!formData.value.orderid) {
+                ElNotification({
+                    message: '网络异常将为您刷新重试',
+                    type: 'error',
+                    duration: 3000,
+                })
+                setTimeout(() => {
+                    SettingStore.setReload()
+                }, 1500)
+            }
         },
         {
             deep: true,
-            immediate: true,
         },
     )
     const rules = reactive({
@@ -121,6 +130,7 @@
                             type: 'success',
                             duration: 3000,
                         })
+                        formData.value = {}
                         emits('getTableList')
                     }
                 } catch (error) {

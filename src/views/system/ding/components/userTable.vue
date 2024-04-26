@@ -290,7 +290,7 @@
         detailsss.value.show()
     }
     const changeDing = (item) => {
-        console.log(item)
+        console.log(item, '我是编辑订单主页面')
 
         Object.assign(shangs.value, item)
         shangsss.value.show()
