@@ -222,6 +222,8 @@
     }
     const searchInfo = async () => {
         loading.value = true
+        query.page = 1
+        pages.value = 1
         try {
             let res = await getFuList(query)
             console.log(res)

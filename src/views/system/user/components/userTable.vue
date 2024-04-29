@@ -164,6 +164,8 @@
 
     const addHandler = async () => {
         loading.value = true
+        query.page = 1
+        pages.value = 1
         if (query.time.length == 0) {
             query.startTime = ''
             query.ednTime = ''

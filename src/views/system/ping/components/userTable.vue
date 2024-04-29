@@ -321,6 +321,8 @@
             query.ednTime = convertToFormat(query.time[1])
         }
         loading.value = true
+        query.page = 1
+        pages.value = 1
         try {
             let res = await getPingList(query)
             console.log(res)

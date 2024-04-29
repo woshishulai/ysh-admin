@@ -141,6 +141,9 @@
     const onSubmit = async (val: number) => {
         loading.value = true
         params.shopName = params.username
+        params.page = 1
+        pages.value = 1
+        localStorage.setItem('sh', 1)
         try {
             let res = await getYongHuList(params)
             tableData.value = res.data

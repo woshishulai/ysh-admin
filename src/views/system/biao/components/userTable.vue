@@ -97,6 +97,8 @@
     })
     const onSubmit = async (val: number) => {
         loading.value = true
+        query.page = 1
+        pages.value = 1
         try {
             let res = await getBiaoList(query)
             tableData.value = res.data

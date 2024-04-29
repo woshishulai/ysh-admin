@@ -421,6 +421,8 @@
         pages.value = 1
         query.page = 1
         params.page = 1
+        localStorage.setItem('dd', 1)
+
         try {
             let res = await getFuList(query)
             console.log(res)

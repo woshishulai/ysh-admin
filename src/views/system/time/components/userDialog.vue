@@ -17,6 +17,9 @@
                         <el-checkbox @change="updateStatus(2)" v-model="statusList.checked2">休息</el-checkbox>
                     </div>
                 </el-form-item>
+                <el-form-item label="" style="color: red">
+                    <p>请填写北京时间</p>
+                </el-form-item>
                 <el-form-item label="开始营业时间" prop="start_time">
                     <el-time-picker v-model="formData.start_time" :placeholder="startTime" />
                 </el-form-item>
