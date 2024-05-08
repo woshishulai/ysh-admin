@@ -8,8 +8,8 @@
                     <img v-show="query.sort_type == 2" @click="changeSortType(1)" src="@/assets/image/login/sort2.svg" alt="" />
                     <img v-show="query.sort_type == 1" src="@/assets/image/login/sort22.svg" alt="" />
                 </el-form-item>
-                <el-form-item label="标签查询" prop="username">
-                    <el-input style="width: 300px" v-model="query.label_name" placeholder="请输入公司,店铺或邮箱查询" />
+                <el-form-item label="标签分类查询" prop="username">
+                    <el-input style="width: 300px" v-model="query.label_name" placeholder="请输入标签分类" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" :icon="Search" @click="onSubmit">查询</el-button>
@@ -20,20 +20,19 @@
             <div class="util">
                 <el-button type="primary" @click="add">
                     <el-icon><Plus /></el-icon>
-                    新增类型
+                    新增标签类型
                 </el-button>
             </div>
             <div class="table-inner">
                 <el-table v-loading="loading" :data="tableData?.list" style="width: 100%; height: 100%" border>
-                    <el-table-column prop="id" label="标签id" align="center" />
-                    <el-table-column prop="name" label="名称" align="center" />
-                    <el-table-column prop="label_cat_name" label="标签所属分类" align="center" />
-                    <el-table-column label="状态" align="center" width="140">
+                    <el-table-column prop="id" label="标签类型id" align="center" />
+                    <el-table-column prop="type_name" label="标签类型名称" align="center" />
+                    <!-- <el-table-column label="状态" align="center" width="140">
                         <template #default="scope">
                             <span class="green" v-if="scope.row.status == 1">正常</span>
                             <span class="red" v-else>冻结</span>
                         </template>
-                    </el-table-column>
+                    </el-table-column> -->
                     <el-table-column prop="operator" width="170" label="操作" align="center" fixed="right">
                         <template #default="scope">
                             <el-button type="primary" size="small" icon="Edit" @click="editHandler(scope.row)"> 编辑 </el-button>
@@ -56,14 +55,16 @@
             </div>
         </div>
 
-        <UserDialog @getLists="getLists" :query="params" ref="userDialog" :title="title" />
+        <UserDialog @getList="getList" :query="params" ref="userDialog" :title="title" />
     </div>
 </template>
 <script lang="ts" setup>
     import { ElMessageBox, ElMessage, FormInstance } from 'element-plus'
     import { onMounted, reactive, ref } from 'vue'
-    import { getBiaoList, removeBiaoAPi } from '@/api/biaoqian/apis'
+    import { getBiaoList, removeBiaoAPi } from '@/api/fenlei/apis'
     import { useSettingStore } from '@/store/modules/setting'
+    import { ElNotification } from 'element-plus'
+
     const SettingStore = useSettingStore()
     import { useUserStore } from '@/store/modules/user'
     const UserStore = useUserStore()
@@ -84,14 +85,13 @@
         name: '',
         id: '',
         img: '',
-        labelcat: '',
         userId: UserStore.userInfo.userId,
         status: '',
     })
-    onMounted(() => {
-        getLists()
+    onMounted(async () => {
+        getList()
     })
-    const getLists = async () => {
+    const getList = async () => {
         loading.value = true
         try {
             let res = await getBiaoList(query)
@@ -127,7 +127,21 @@
                 }
                 try {
                     let res = await removeBiaoAPi(query)
-                    SettingStore.setReload()
+                    // SettingStore.setReload()
+                    if (res.code != 1) {
+                        ElNotification({
+                            message: res.msg,
+                            type: 'error',
+                            duration: 3000,
+                        })
+                    } else {
+                        ElNotification({
+                            message: res.msg,
+                            type: 'success',
+                            duration: 3000,
+                        })
+                        getList()
+                    }
                 } catch (error) {
                     console.log(error)
                 }
@@ -139,8 +153,8 @@
         title.value = '修改类型'
         params.name = row.name
         params.id = row.id
-        params.labelcat = row.labelcat || ''
         params.status = row.status
+        console.log(params)
         userDialog.value.show()
     }
     const add = () => {
@@ -148,7 +162,6 @@
         params.name = ''
         params.id = ''
         params.status = ''
-        params.labelcat = ''
         console.log(params)
         userDialog.value.show()
     }
@@ -191,5 +204,5 @@
     }
 </script>
 <style lang="scss" scoped>
-    @import '../index.scss';
+    @import './index.scss';
 </style>

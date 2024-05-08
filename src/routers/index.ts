@@ -23,6 +23,7 @@ import xieyi from './ziji/xieyi'
 import huikuan from './ziji/huikuan'
 import tui from './ziji/tui'
 import jiesuan from './ziji/jiesuan'
+import fenlei from './ziji/fenlei'
 
 // 异步组件
 export const asyncRoutes = [
@@ -62,6 +63,8 @@ export const asyncRoutes = [
     ...tui,
     // 结算,
     ...jiesuan,
+    //标签分类
+    ...fenlei,
 ]
 
 /**

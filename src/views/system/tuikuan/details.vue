@@ -464,11 +464,11 @@
                 .item-p {
                     display: flex;
                     align-items: center;
+                    margin-top: 16px;
                     justify-content: space-between;
                     .cu {
                         color: #000;
                         font-weight: 500;
-                        margin-top: 10px;
                     }
                 }
             }

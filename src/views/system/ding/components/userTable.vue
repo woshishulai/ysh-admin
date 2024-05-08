@@ -36,6 +36,8 @@
                 <el-table v-loading="loading" :data="tableData?.list" style="width: 100%; height: 100%" border>
                     <el-table-column prop="shop_id" v-if="role == 1" label="店铺id" width="100" align="center" />
                     <el-table-column prop="orderid" label="订单号" width="220" align="center" />
+                    <el-table-column prop="shop_realname" label="商家联系人" width="100" align="center" />
+                    <el-table-column prop="shop_phone" label="商家电话" width="120" align="center" />
                     <el-table-column label="订单状态" width="220" align="center">
                         <template #default="scope">
                             <span style="color: #f56c6c" v-if="scope.row.refund_status != 0 && scope.row.refund_status != 4">
@@ -228,6 +230,12 @@
                 return '商家结算完成'
             case 10:
                 return '商户服务完成凭证待客户确认'
+            case 11:
+                return '已批准退款'
+            case 12:
+                return '已拒绝退款'
+            case 13:
+                return '申诉中'
             default:
                 return '未知状态'
         }
@@ -282,6 +290,18 @@
         {
             value: '10',
             label: '商户服务完成凭证待客户确认',
+        },
+        {
+            value: '11',
+            label: '已批准退款',
+        },
+        {
+            value: '12',
+            label: '已拒绝退款',
+        },
+        {
+            value: '13',
+            label: '申诉中',
         },
     ]
     const rules = reactive({

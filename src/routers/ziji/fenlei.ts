@@ -6,14 +6,14 @@ const systemRouter = [
     {
         path: '/',
         component: Layout,
-        redirect: '/jie/list',
-        name: 'jie',
+        redirect: '/labletype/list',
+        name: 'label',
         children: [
             {
-                path: '/jie/list',
-                component: () => import('@/views/system/jiesuan/index.vue'),
-                name: 'jie-list',
-                meta: { title: '结转订单管理', icon: 'MenuIcon' },
+                path: '/labletype/list',
+                component: () => import('@/views/system/fenlei/userTable.vue'),
+                name: 'labels',
+                meta: { title: '标签分类列表', icon: 'MenuIcon' },
             },
         ],
     },

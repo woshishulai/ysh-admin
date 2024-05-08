@@ -466,10 +466,10 @@
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+                    margin-top: 16px;
                     .cu {
                         color: #000;
                         font-weight: 500;
-                        margin-top: 10px;
                     }
                 }
             }
