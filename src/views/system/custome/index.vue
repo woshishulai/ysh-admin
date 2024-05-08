@@ -110,6 +110,9 @@
         sort_type: 2,
     })
     onMounted(async () => {
+        fetch()
+    })
+    const fetch = async () => {
         try {
             let res = await getYongHuList(params)
             tableData.value = res.data
@@ -117,7 +120,7 @@
         } catch (err) {
             console.log(err)
         }
-    })
+    }
     onMounted(async () => {
         try {
             let res = await changeYongHuList()
@@ -275,7 +278,20 @@
                 }
                 try {
                     let res = await removeYongHuAPi(query)
-                    SettingStore.setReload()
+                    if (res.code == 1) {
+                        ElNotification({
+                            message: res.msg,
+                            type: 'success',
+                            duration: 3000,
+                        })
+                        fetch()
+                    } else {
+                        ElNotification({
+                            message: res.msg,
+                            type: 'error',
+                            duration: 3000,
+                        })
+                    }
                 } catch (error) {
                     console.log(error)
                 }

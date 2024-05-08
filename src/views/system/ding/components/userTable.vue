@@ -34,16 +34,19 @@
             </div>
             <div class="table-inner">
                 <el-table v-loading="loading" :data="tableData?.list" style="width: 100%; height: 100%" border>
-                    <el-table-column prop="add_time" label="添加时间" width="200" align="center" />
+                    <el-table-column prop="shop_id" v-if="role == 1" label="店铺id" width="100" align="center" />
                     <el-table-column prop="orderid" label="订单号" width="220" align="center" />
-                    <el-table-column label="支付状态" width="220" align="center">
+                    <el-table-column label="订单状态" width="220" align="center">
                         <template #default="scope">
-                            <span :class="getPaymentStatusColor(scope.row.is_pay)">
+                            <span style="color: #f56c6c" v-if="scope.row.refund_status != 0 && scope.row.refund_status != 4">
+                                {{ refund_status[scope.row.refund_status] }}
+                            </span>
+                            <span v-else :class="getPaymentStatusColor(scope.row.is_pay)">
                                 {{ getPaymentStatusText(scope.row.is_pay) }}
                             </span>
                         </template>
                     </el-table-column>
-                    <el-table-column label="服务状态" width="160" align="center">
+                    <el-table-column label="商家服务状态" width="160" align="center">
                         <template #default="scope">
                             <span :class="scope.row.handle == 2 || scope.row.handle == 3 ? 'green' : 'red'">
                                 {{
@@ -75,18 +78,21 @@
                     </el-table-column>
                     <el-table-column prop="goods_name" label="商品名称" width="200" align="center" />
                     <el-table-column prop="price" label="服务商品金额" width="200" align="center" />
-
                     <el-table-column prop="shop_name" width="200" label="商家名" align="center" />
                     <el-table-column prop="nickname" width="200" label="昵称" align="center" />
                     <el-table-column prop="goods_id" label="商品iD" align="center" v-if="role == 1" />
                     <el-table-column prop="uid" label="用户id" align="center" v-if="role == 1" />
-
-                    <el-table-column label="操作" align="center" width="220" fixed="right">
+                    <el-table-column prop="add_time" label="添加时间" width="200" align="center" />
+                    <el-table-column label="操作" align="center" width="240" fixed="right">
                         <template #default="scope">
                             <div style="display: flex; align-items: center; flex-wrap: wrap">
                                 <el-button
                                     type="primary"
-                                    v-if="role == 1 && (scope.row.is_pay === 1 || scope.row.is_pay === 3)"
+                                    v-if="
+                                        role == 1 &&
+                                        (scope.row.refund_status == 0 || scope.row.refund_status == 4) &&
+                                        (scope.row.is_pay === 1 || scope.row.is_pay === 3)
+                                    "
                                     @click="editHandler(scope.row)"
                                     icon="Edit"
                                     size="small"
@@ -95,12 +101,25 @@
                                 </el-button>
                                 <el-button
                                     type="primary"
-                                    v-if="role != 1 && (scope.row.is_pay === 1 || scope.row.is_pay === 10)"
+                                    v-if="
+                                        role != 1 &&
+                                        (scope.row.refund_status == 0 || scope.row.refund_status == 4) &&
+                                        (scope.row.is_pay === 1 || scope.row.is_pay === 10)
+                                    "
                                     @click="changeDing(scope.row)"
                                     icon="Edit"
                                     size="small"
                                 >
                                     编辑
+                                </el-button>
+                                <el-button
+                                    type="primary"
+                                    v-if="scope.row.refund_status != 0 && scope.row.refund_status != 4"
+                                    @click="showTuikuan(scope.row)"
+                                    icon="Edit"
+                                    size="small"
+                                >
+                                    去退款订单编辑
                                 </el-button>
                                 <el-button type="success" size="small" icon="View" @click="detailss(scope.row)"> 预览 </el-button>
                             </div>
@@ -175,9 +194,11 @@
     import { getFuList, addDingDan } from '@/api/ding/apis'
     import { useSettingStore } from '@/store/modules/setting'
     import { Search } from '@element-plus/icons-vue'
+    import { useRouter } from 'vue-router'
     import { getFuList as shuju } from '@/api/fu/apis'
     import { ElNotification } from 'element-plus'
     const shangsss = ref(null)
+    const router = useRouter()
     const SettingStore = useSettingStore()
     const ruleFormRef = ref<FormInstance>()
     const pagessssss = Number(localStorage.getItem('dd')) || 1
@@ -211,6 +232,7 @@
                 return '未知状态'
         }
     }
+    const refund_status = ['', '申请退款中', '已批准退款', '已拒绝退款', '', '申诉中', '已完成']
     const showDetails = ref(false)
     import { useUserStore } from '@/store/modules/user'
     const UserStore = useUserStore()
@@ -299,6 +321,16 @@
         // 使用正则表达式检查手机号格式
         const phonePattern = /^[1][3-9]\d{9}$/
         return phonePattern.test(phone)
+    }
+    //去退款订单
+    const showTuikuan = (item) => {
+        console.log(item)
+        router.push({
+            path: '/tui/list',
+            query: {
+                orderid: item.orderid,
+            },
+        })
     }
     const changeSortType = async (index) => {
         query.sort_type = index

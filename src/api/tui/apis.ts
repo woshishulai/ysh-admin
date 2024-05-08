@@ -38,7 +38,7 @@ export function getTuiList(data) {
     })
 }
 
-//添加或修改店铺详情
+//平台同意退款
 export function changeTuiList(data) {
     let encryptedData = codeParams(data)
     return request({
@@ -50,7 +50,18 @@ export function changeTuiList(data) {
         data: encryptedData,
     })
 }
-
+//商家同意退款
+export function changeShopList(data) {
+    let encryptedData = codeParams(data)
+    return request({
+        url: 'v1/bm/Order/OrderSellerRefund',
+        method: 'post',
+        headers: {
+            apiKey: 'YW5uaWVraWRzQXBp', // 这里添加了 apiKey
+        },
+        data: encryptedData,
+    })
+}
 //改变店铺状态
 export function removeAnList(data) {
     let encryptedData = codeParams(data)
@@ -69,6 +80,19 @@ export function addAnListInfo(data) {
     let encryptedData = codeParams(data)
     return request({
         url: 'v1/bm/Shop/shopCaseAddorEdit',
+        method: 'post',
+        headers: {
+            apiKey: 'YW5uaWVraWRzQXBp', // 这里添加了 apiKey
+        },
+        data: encryptedData,
+    })
+}
+
+//商家申诉
+export function shangjiashensu(data) {
+    let encryptedData = codeParams(data)
+    return request({
+        url: 'v1/bm/Order/OrderAppeal',
         method: 'post',
         headers: {
             apiKey: 'YW5uaWVraWRzQXBp', // 这里添加了 apiKey

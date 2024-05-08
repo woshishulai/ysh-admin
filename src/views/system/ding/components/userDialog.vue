@@ -113,6 +113,8 @@
     }
     const handleClose = async () => {
         console.log(formData.value)
+        let orderid = formData.value.orderid
+        console.log(orderid)
 
         await ruleFormRef.value.validate(async (valid, fields) => {
             if (valid) {
@@ -131,6 +133,7 @@
                             duration: 3000,
                         })
                         formData.value = {}
+                        formData.value.orderid = orderid
                         emits('getTableList')
                     }
                 } catch (error) {

@@ -181,6 +181,8 @@
         return true
     }
     const handleClose = async () => {
+        let orderid = formData.value.orderid
+        console.log(orderid)
         await ruleFormRef.value.validate(async (valid, fields) => {
             if (valid) {
                 console.log(formData.value)
@@ -193,6 +195,7 @@
                             duration: 3000,
                         })
                         formData.value = {}
+                        formData.value.orderid = orderid
                         emits('getTableList')
                         // SettingStore.setReload()
                     } else {

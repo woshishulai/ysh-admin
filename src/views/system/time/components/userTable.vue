@@ -148,7 +148,7 @@
         }
         let res = await removeTimeLists(querys)
         if (res.code == 1) {
-            SettingStore.setReload()
+            getList()
         } else {
             ElNotification({
                 message: res.msg,
