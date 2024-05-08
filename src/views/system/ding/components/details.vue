@@ -11,7 +11,12 @@
                         </div>
                         <div class="item-p">
                             <span class="cu">订单状态:</span>
-                            <span>{{ getPaymentStatusText(formData.is_pay) }}</span>
+                            <span style="color: #f56c6c" v-if="formData.refund_status != 0 && formData.refund_status != 4">
+                                {{ refund_status[formData.refund_status] }}
+                            </span>
+                            <span v-else :class="getPaymentStatusColor(formData.is_pay)">
+                                {{ getPaymentStatusText(formData.is_pay) }}
+                            </span>
                         </div>
                         <div class="item-p">
                             <span class="cu">创建时间:</span>
@@ -299,6 +304,7 @@
                 return '未知状态'
         }
     }
+
     const getDetails = async (id) => {
         loading.value = true
         list.value = []

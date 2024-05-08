@@ -11,7 +11,13 @@
                         </div>
                         <div class="item-p">
                             <span class="cu">订单状态:</span>
-                            <span>{{ getPaymentStatusText(formData.is_pay) }}</span>
+                            <!-- <span>{{ getPaymentStatusText(formData.is_pay) }}</span> -->
+                            <span style="color: #f56c6c" v-if="formData.refund_status != 0 && formData.refund_status != 4">
+                                {{ refund_status[formData.refund_status] }}
+                            </span>
+                            <span v-else :class="getPaymentStatusColor(formData.is_pay)">
+                                {{ getPaymentStatusText(formData.is_pay) }}
+                            </span>
                         </div>
                         <div class="item-p">
                             <span class="cu">创建时间:</span>
@@ -249,7 +255,7 @@
     import type { TableColumnCtx, TableInstance } from 'element-plus'
     import { getDianPuDetails } from '@/api/ding/apis'
     import { ElNotification, ElMessage, FormInstance } from 'element-plus'
-
+    const refund_status = ['', '申请退款中', '商家已同意退款', '已拒绝退款', '已撤销退款', '申诉中', '已完成', '', '', '待客服处理']
     const dialogVisible = ref(false)
     const formData = ref({})
     const loading = ref(false)
@@ -272,7 +278,7 @@
     const getPaymentStatusColor = (status) => {
         return status == 0 || status == 4 ? 'green' : 'red'
     }
-    const refund_status = ['', '申请退款中', '商家已同意退款', '已拒绝退款', '已撤销退款', '申诉中', '已完成', '', '', '待客服处理']
+
     const getPaymentStatusText = (status) => {
         switch (status) {
             case 1:
