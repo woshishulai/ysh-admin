@@ -25,19 +25,20 @@
                     </el-form-item>
 
                     <el-form-item v-show="list.length >= 1" label="凭证举证图片预览" props="ysh_voucher">
-                        <el-image
-                            v-for="(item, index) in list"
-                            :key="index"
-                            style="max-width: 500px"
-                            class="avatar"
-                            :src="'https://api.ustudygroup.com/' + item"
-                            :zoom-rate="1.2"
-                            :max-scale="7"
-                            :min-scale="0.2"
-                            :preview-src-list="['https://api.ustudygroup.com/' + item]"
-                            :initial-index="4"
-                            fit="cover"
-                        />
+                        <div class="item" v-for="(item, index) in list" :key="index">
+                            <el-image
+                                style="max-width: 500px"
+                                class="avatar"
+                                :src="'https://api.ustudygroup.com/' + item"
+                                :zoom-rate="1.2"
+                                :max-scale="7"
+                                :min-scale="0.2"
+                                :preview-src-list="['https://api.ustudygroup.com/' + item]"
+                                :initial-index="4"
+                                fit="cover"
+                            />
+                            <img class="remove" @click.stop="removess(index)" src="../../../../src/assets/remove/remove.png" alt="" />
+                        </div>
                     </el-form-item>
                 </el-form>
             </div>
@@ -90,6 +91,9 @@
             deep: true,
         },
     )
+    const removess = (index) => {
+        list.value.splice(index, 1)
+    }
     const handleAvatarSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
         list.value.push(response.data.path)
     }
@@ -174,6 +178,16 @@
             display: flex;
             justify-content: center;
         }
+    }
+    .item {
+        position: relative;
+    }
+    .item .remove {
+        position: absolute;
+        right: 3px;
+        top: -7px;
+        width: 15px;
+        cursor: pointer;
     }
     :deep(.m-user-table) {
         width: 100%;
