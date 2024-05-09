@@ -5,9 +5,9 @@
                 <el-form-item label="菜单名称" prop="menuname">
                     <el-input v-model="formData.menuname" placeholder="请输入菜单名称" />
                 </el-form-item>
-                <!-- <el-form-item label="路由地址" prop="WebUrl">
+                <el-form-item label="路由地址" v-if="formData.id" prop="WebUrl">
                     <el-input v-model="formData.WebUrl" placeholder="请输入路由地址" />
-                </el-form-item> -->
+                </el-form-item>
                 <el-form-item label="排序" prop="sort">
                     <el-input type="number" v-model="formData.sort" placeholder="数字越小越靠前" />
                 </el-form-item>
@@ -56,6 +56,8 @@
     watch(
         () => props.query,
         (newQuery) => {
+            console.log(props.query)
+
             // 当 props.query 发生变化时，更新 formData 的值
             formData.value = newQuery
         },

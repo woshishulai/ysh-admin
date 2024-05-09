@@ -31,7 +31,7 @@
                             {{ scope.row.status == 1 ? '正常' : '冻结' }}
                         </template>
                     </el-table-column>
-                    <el-table-column prop="status" width="170" label="操作">
+                    <el-table-column prop="status" width="200" label="操作">
                         <template #default="scope">
                             <div class="cell">
                                 <el-button v-if="scope.row.children" type="success" size="small" :icon="Plus" @click="add(scope.row, 1)">

@@ -23,7 +23,7 @@
                         </template>
                     </el-table-column>
 
-                    <el-table-column prop="operator" width="170" label="操作" align="center" fixed="right">
+                    <el-table-column prop="operator" width="200" label="操作" align="center" fixed="right">
                         <template #default="scope">
                             <el-button type="primary" size="small" icon="Edit" @click="editHandler(scope.row)"> 编辑 </el-button>
                             <el-button type="danger" v-if="scope.row.id > 7" size="small" icon="Delete" @click="del(scope.row)">

@@ -60,7 +60,7 @@
                     </el-table-column>
                     <el-table-column prop="up_time" label="更新时间" width="170" align="center" />
                     <!-- <el-table-column prop="password" width="170" label="密码" align="center" /> -->
-                    <el-table-column prop="operator" width="170" label="操作" align="center" fixed="right">
+                    <el-table-column prop="operator" width="200" label="操作" align="center" fixed="right">
                         <template #default="scope">
                             <el-button type="success" size="small" icon="View" @click="detailss(scope.row)"> 查看 </el-button>
                             <el-button type="primary" size="small" icon="Edit" @click="editHandler(scope.row)"> 编辑 </el-button>

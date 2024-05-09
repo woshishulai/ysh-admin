@@ -52,7 +52,7 @@
                         </template>
                     </el-table-column>
 
-                    <el-table-column prop="status" align="center" width="170" label="操作" fixed="right">
+                    <el-table-column prop="status" align="center" width="200" label="操作" fixed="right">
                         <template #default="scope">
                             <div class="cell">
                                 <!-- <el-button v-if="scope.row.children" type="success" size="small" :icon="Plus" @click="add()">
