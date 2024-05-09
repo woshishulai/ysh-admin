@@ -19,7 +19,6 @@
 <script lang="ts" setup>
     import { ref } from 'vue'
     import LoginForm from './components/LoginForm.vue'
-    import SwitchDark from '@/components/SwitchDark/index.vue'
     // import LoginQrcode from './components/LoginQrcode.vue'
 
     const accountLogin = ref<boolean>(true)
