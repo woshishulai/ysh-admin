@@ -28,8 +28,8 @@
     })
     const query = reactive({
         time: [],
-        startTime: '',
-        ednTime: '',
+        start_time: '',
+        end_time: '',
         shop_id: '',
         user_id: '',
         keyword: '',
@@ -76,8 +76,8 @@
     const getUserDetailsMessaeg = (index) => {
         query.user_id = index
         query.time = []
-        query.startTime = ''
-        query.ednTime = ''
+        query.start_time = ''
+        query.end_time = ''
         getDetailsMessageList()
     }
     function convertToFormat(dateStr) {
@@ -96,11 +96,11 @@
         console.log(query)
         loading.value = true
         if (query.time.length == 0) {
-            query.startTime = ''
-            query.ednTime = ''
+            query.start_time = ''
+            query.end_time = ''
         } else {
-            query.startTime = convertToFormat(query.time[0])
-            query.ednTime = convertToFormat(query.time[1])
+            query.start_time = convertToFormat(query.time[0])
+            query.end_time = convertToFormat(query.time[1])
             delete query.title
         }
         loading.value = true
