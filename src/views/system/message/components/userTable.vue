@@ -1,24 +1,85 @@
 <script setup>
     import { ref, computed, reactive, onMounted } from 'vue'
     import { useRouter, useRoute } from 'vue-router'
+    import { getMessageAll, getUserMessage, getDetailsMessage } from '@/api/message/apis'
+    import { ElNotification } from 'element-plus'
+    import { useSettingStore } from '@/store/modules/setting'
+    const SettingStore = useSettingStore()
     const router = useRouter()
     const route = useRoute()
     const props = defineProps({})
     const leftElementHeight = ref(null)
     const loading = ref(false)
     const heights = ref(false)
-    const pages = ref(1)
     const tableData = ref([])
+    const userList = ref([])
+    const messageList = ref([])
+
     onMounted(() => {
         heights.value = leftElementHeight.value.offsetHeight - 50
+        // Promise.all([fetchData()])
+        //     .then((values) => {
+        //         getUserList()
+        //     })
+        //     .catch((error) => {
+        //         console.error(error)
+        //     })
+        fetchData()
     })
     const query = reactive({
         time: [],
         startTime: '',
         ednTime: '',
-        page: pages.value,
-        pageSize: 10,
+        shop_id: '',
+        user_id: '',
+        keyword: '',
     })
+    const fetchData = async () => {
+        let res = await getMessageAll()
+        if (res.code == 1) {
+            tableData.value = res.data.list
+            if (tableData.value.length < 1) {
+                return
+            }
+            query.shop_id = tableData.value.length ? tableData.value[0].shop_id : ''
+            getUserList()
+        } else {
+            ElNotification({
+                message: res.msg,
+                type: 'error',
+                duration: 3000,
+            })
+        }
+    }
+    const getUserList = async () => {
+        let res = await getUserMessage({ shop_id: query.shop_id })
+        if (res.code == 1) {
+            userList.value = res.data?.list
+            if (userList.value.length < 1) {
+                return
+            }
+            query.user_id = userList.value.length >= 1 ? userList.value[0]?.id : ''
+            getDetailsMessageList()
+        } else {
+            ElNotification({
+                message: res.msg,
+                type: 'error',
+                duration: 3000,
+            })
+        }
+    }
+    const chanegActive = (index) => {
+        query.shop_id = index
+        userList.value = []
+        getUserList()
+    }
+    const getUserDetailsMessaeg = (index) => {
+        query.user_id = index
+        query.time = []
+        query.startTime = ''
+        query.ednTime = ''
+        getDetailsMessageList()
+    }
     function convertToFormat(dateStr) {
         const date = new Date(dateStr)
         let formattedDate = date.toLocaleString('zh-CN', {
@@ -31,10 +92,9 @@
         })
         return formattedDate.replace(/\//g, '-')
     }
-    const addHandler = async () => {
+    const getDetailsMessageList = async () => {
+        console.log(query)
         loading.value = true
-        query.page = 1
-        pages.value = 1
         if (query.time.length == 0) {
             query.startTime = ''
             query.ednTime = ''
@@ -45,11 +105,41 @@
         }
         loading.value = true
         try {
-            // let res = await getKehuList(query)
-            loading.value = false
+            let res = await getDetailsMessage(query)
+            if (res.code == 1) {
+                console.log(res)
+                if (res.data.list.length < 1) {
+                    return
+                }
+                messageList.value = res.data.list
+                messageList.value.forEach((item) => {
+                    if (item.content) {
+                        let imgRegex = /<img[^>]+src="([^">]+)"/g
+                        if (imgRegex.test(item.content)) {
+                            item.yes = true
+                        }
+                        item.content = item.content.replace(imgRegex, function (match, p1) {
+                            if (!p1.startsWith('https://chat.ustudygroup.com')) {
+                                item.url = 'https://chat.ustudygroup.com' + p1
+                                return match.replace(p1, 'https://chat.ustudygroup.com' + p1)
+                            } else {
+                                return match
+                            }
+                        })
+                    }
+                })
+                console.log(messageList.value)
+            } else {
+                ElNotification({
+                    message: res.msg,
+                    type: 'error',
+                    duration: 3000,
+                })
+            }
         } catch (error) {
             console.log(error)
         }
+        loading.value = false
     }
 </script>
 
@@ -58,13 +148,27 @@
         <div ref="leftElementHeight" class="left-shop-list">
             <div class="shop-title"> 店铺列表 </div>
             <el-scrollbar v-show="heights" :style="{ height: heights + 'PX' }">
-                <p v-for="item in 20" :key="item" class="scrollbar-demo-item">{{ item }}</p>
+                <p
+                    v-for="item in tableData"
+                    :key="item.shop_id"
+                    :class="query.shop_id == item.shop_id ? 'active' : ''"
+                    class="scrollbar-demo-item"
+                    @click="chanegActive(item.shop_id)"
+                    >{{ item.shop_name }}</p
+                >
             </el-scrollbar>
         </div>
         <div ref="leftElementHeight" class="left-shop-list">
             <div class="shop-title"> 客户列表 </div>
             <el-scrollbar v-show="heights" :style="{ height: heights + 'PX' }">
-                <p v-for="item in 20" :key="item" class="scrollbar-demo-item">{{ item }}</p>
+                <p
+                    v-for="item in userList"
+                    :key="item.id"
+                    :class="query.user_id == item.id ? 'active' : ''"
+                    class="scrollbar-demo-item"
+                    @click="getUserDetailsMessaeg(item.id)"
+                    >{{ item.name || item.nickname }}</p
+                >
             </el-scrollbar>
         </div>
         <div class="right-show-message">
@@ -80,10 +184,10 @@
                         />
                     </el-form-item>
                     <el-form-item label="关键字">
-                        <el-input style="width: 240px" placeholder="请输入聊天关键字" />
+                        <el-input v-model="query.keyword" style="width: 240px" placeholder="请输入聊天关键字" />
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" @click="addHandler">
+                        <el-button type="primary" @click="getDetailsMessageList">
                             <el-icon><Search /></el-icon>
                             查询
                         </el-button>
@@ -92,25 +196,31 @@
             </div>
             <div class="footer">
                 <div class="table-inner">
-                    <el-table v-loading="loading" :data="tableData?.list" style="width: 100%; height: 100%" border>
-                        <el-table-column prop="id" label="角色" width="70" align="center" />
-                        <el-table-column label="类型" width="126" align="center">
+                    <el-table v-loading="loading" :data="messageList" style="width: 100%; height: 100%" border>
+                        <el-table-column prop="id" label="角色" width="70" align="center">
                             <template #default="scope">
+                                {{ scope.row.direction == 'to_service' ? '用户' : '商家' }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="content" label="内容" align="center">
+                            <template #default="scope">
+                                <p v-if="!scope.row.yes" v-html="scope.row.content"></p>
                                 <el-image
-                                    style="width: 100px; height: 100px"
-                                    :src="scope.row.head_img"
+                                    v-else
+                                    style="width: 80px"
+                                    :src="scope.row.url"
                                     :zoom-rate="1.2"
                                     :max-scale="7"
                                     :min-scale="0.2"
+                                    :preview-src-list="[scope.row.url]"
                                     :initial-index="4"
                                     fit="cover"
                                 />
                             </template>
                         </el-table-column>
-                        <el-table-column prop="nickname" label="内容" align="center" />
                     </el-table>
                 </div>
-                <div class="pagination">
+                <!-- <div class="pagination">
                     <el-pagination
                         v-model:currentPage="pages"
                         :page-size="tableData.pageSize"
@@ -120,7 +230,7 @@
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
                     />
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -150,6 +260,7 @@
             background: #fff;
             height: 100%;
             border-radius: 1%;
+            box-sizing: border-box;
         }
     }
     .scrollbar-demo-item {
@@ -160,6 +271,11 @@
         margin: 10px;
         text-align: center;
         border-radius: 4px;
+
+        cursor: pointer;
+    }
+    .active,
+    .scrollbar-demo-item:hover {
         background: var(--el-color-primary-light-9);
         color: var(--el-color-primary);
     }

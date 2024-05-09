@@ -23,11 +23,11 @@ export const codeParams = (params) => {
     }
 }
 
-//获取店铺聊天
-export function getAnList(data) {
+//获取所有店铺聊天
+export function getMessageAll(data) {
     let encryptedData = codeParams(data)
     return request({
-        url: 'v1/bm/Shop/shopCaseList',
+        url: 'v1/bm/ChatAdmin/getShopList',
         method: 'post',
         headers: {
             apiKey: 'YW5uaWVraWRzQXBp', // 这里添加了 apiKey
@@ -37,23 +37,10 @@ export function getAnList(data) {
 }
 
 //添加或修改店铺详情
-export function changeAnList(data) {
+export function getUserMessage(data) {
     let encryptedData = codeParams(data)
     return request({
-        url: '/v1/bm/Shop/shopCaseAddorEdit',
-        method: 'post',
-        headers: {
-            apiKey: 'YW5uaWVraWRzQXBp', // 这里添加了 apiKey
-        },
-        data: encryptedData,
-    })
-}
-
-//改变店铺状态
-export function removeAnList(data) {
-    let encryptedData = codeParams(data)
-    return request({
-        url: 'v1/bm/Shop/shopCaseDel',
+        url: '/v1/bm/ChatAdmin/getShopUsers',
         method: 'post',
         headers: {
             apiKey: 'YW5uaWVraWRzQXBp', // 这里添加了 apiKey
@@ -63,10 +50,22 @@ export function removeAnList(data) {
 }
 
 //上传店铺信息
-export function addAnListInfo(data) {
+export function getDetailsMessage(data) {
     let encryptedData = codeParams(data)
     return request({
-        url: 'v1/bm/Shop/shopCaseAddorEdit',
+        url: 'v1/bm/ChatAdmin/getShopChatmsg',
+        method: 'post',
+        headers: {
+            apiKey: 'YW5uaWVraWRzQXBp', // 这里添加了 apiKey
+        },
+        data: encryptedData,
+    })
+}
+//未读消息
+export function shopMessage(data) {
+    let encryptedData = codeParams(data)
+    return request({
+        url: 'v1/bm/ChatAdmin/getNoread',
         method: 'post',
         headers: {
             apiKey: 'YW5uaWVraWRzQXBp', // 这里添加了 apiKey

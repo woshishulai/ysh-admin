@@ -12,4 +12,7 @@
 
 <style scoped lang="scss">
     @import './index';
+    :deep(.el-table .el-table__cell) {
+        position: static;
+    }
 </style>

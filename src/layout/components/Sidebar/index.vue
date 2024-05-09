@@ -11,7 +11,10 @@
                 class="el-menu-vertical-demo"
                 :collapse="isCollapse"
             >
-                <el-menu-item @click="showLiaoTian"> 聊天后台 </el-menu-item>
+                <el-menu-item @click="showLiaoTian">
+                    聊天后台
+                    <p class="reds" v-if="show"></p>
+                </el-menu-item>
                 <div v-for="item in menuList" :key="item.id">
                     <el-menu-item v-if="item.levelList.length == 0" :index="item.id + ''" @click="router.push(item.web_url)">
                         {{ item.menu_name }}
@@ -34,16 +37,41 @@
     //左侧的logo是否展示
     import Logo from './components/Logo.vue'
     import { useSettingStore } from '@/store/modules/setting'
-    import { computed, ref, onMounted, watch } from 'vue'
+    import { computed, ref, onMounted, watch, onBeforeUnmount } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
     import { useUserStore } from '@/store/modules/user'
     import { Base64 } from 'js-base64'
     import { getMenuList } from '@/api/caidan/apis'
+    import { shopMessage } from '@/api/message/apis'
+
     const menuList = ref([])
     const route = useRoute()
     const UserStore = useUserStore()
     const active = ref(null)
     const router = useRouter()
+    const timer = ref(null)
+    const show = ref(false)
+    const getShopList = async () => {
+        let res = await shopMessage({
+            shop_id: UserStore.userInfo.shopId,
+        })
+        if (res.data.list.length < 1) {
+            show.value = false
+        } else {
+            show.value = true
+        }
+    }
+    onBeforeUnmount(() => {
+        clearInterval(timer.value)
+        timer.value = null
+    })
+    timer.value = setInterval(() => {
+        if (UserStore.userInfo.isAdmin == 1) {
+            clearInterval(timer.value)
+        }
+        getShopList()
+    }, 5000)
+
     onMounted(async () => {
         try {
             let res = await getMenuList()
@@ -110,5 +138,12 @@
 <style lang="scss">
     .el-menu-vertical-demo:not(.el-menu--collapse) {
         height: 100%;
+    }
+    .reds {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: red;
+        margin-left: 10px;
     }
 </style>
